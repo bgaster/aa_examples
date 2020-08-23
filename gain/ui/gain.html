@@ -1,0 +1,142 @@
+<!doctype html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title></title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link href='https://fonts.googleapis.com/css?family=Orbitron' rel='stylesheet'>
+
+    <style type="text/css">
+        div {
+            -webkit-user-select: none; /* Safari */
+            -ms-user-select: none; /* IE 10+ and Edge */
+            user-select: none; /* Standard syntax */
+        }
+
+        body {
+            font-family: Orbitron;
+            padding-top: 10%;
+            text-align: center;
+            background-color: black;
+            color:thistle;
+        }
+
+        .title {
+            width: 80%;
+            height: 40px;
+            position: absolute;
+            top: 0;
+            display: table-cell;
+            vertical-align: top;
+            text-align: center;
+        }
+
+        .container {
+            position: fixed;
+            left: 10px;
+            top: 50px;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .left-element {
+            display: inline-block;
+            float: left;
+        }
+        
+        .right-element {
+            display: inline-block;
+            padding: 10px;
+            float: left;
+        }        
+    </style>
+    <script src="../js/jquery.min.js"></script>
+    <script src = "../js/support.js"></script>
+    <script src = "./js/jquery.knob.min.js"></script>
+    
+    <script>
+        var sendParam = 1;
+        var getParam = 2;
+        var gainParam = 0; 
+        var meterControl = 0;
+
+        // Audio Anywhere API functions
+        function paramChange(param, value) {
+            if (param == gainParam) {
+                $('.gainKnob')
+                    .val(value)
+                    .trigger('change')
+            }
+        }
+
+        function controlChange(ctrlTag, value) {
+            let x = map(value, 0, 127, -70, 4)
+            $('.gainKnob')
+                    .val(x)
+                    .trigger('change')
+            //if(ctrlTag == meterControl) { -->
+            //  document.getElementById("meter").value = value;
+            //}
+        }
+
+        // callback on load
+        window.addEventListener('load', () => {     
+            // uncomment for debug variant 
+            //console.log = console.error = (str) => {
+            //    sendMsg(0, 0, str);
+            //}
+        });
+
+        $(function() {
+            $(".gainKnob").knob({
+                    'change' : function (v) { 
+                        sendMsg(sendParam, 0, v);
+                     }
+                }
+            );
+
+            $('.gainKnob').trigger(
+                'configure',
+                {
+                    "min":-70,
+                    "max":+4,
+                    "step":0.1,
+                    "fgColor":"#ffa857",
+                    "bgColor":"#b3a5c0",
+                    "width":150,
+                    "thickness":.3,
+                    "angleOffset":-125,
+			        "angleArc":250,
+                    "displayInput":false,
+                    "cursor":20,
+                }
+            );
+        });
+
+        function map(x, in_min, in_max, out_min, out_max) {
+            return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min
+        }
+        
+    </script>
+   
+</head>
+    <body >
+        <div class="title">
+            <for for="gain_knob" style="font-size: 30px;font-weight: bold;">Gain</for>
+        </div>
+        <div class="container">
+            <div class="left-element">
+                <input id="gain_knob"  class="gainKnob"/>
+            </div>
+            <div class="right-element">
+                <section class="main">
+                    <canvas id="meter" width="30" height="125" data-val="0">No canvas</canvas>
+                </section>
+                <!-- <div style="text-align: center;">
+                    <input type="range" id="demoInput" min="0" max="100" value="0">
+                </div> -->
+            </div>
+        </div>
+    </body>
+</html>

@@ -1,0 +1,27 @@
+{
+	"wasm_url": "/gain/gain.wasm",
+	"gui": { 
+		"url": "/gain/gain.html",
+		"name": "Gain WASM",
+		"params": [-50.0],
+		"width": 300,
+		"height": 300
+	},
+	"info": {
+		"name": "GAIN",
+		"vendor": "cuberoo_",
+		"presets": 1,
+		"parameters": 0,
+		"inputs": 1,
+		"outputs": 1,
+		"midi_inputs": 0,
+		"midi_outputs": 0,
+		"id": 9614,
+		"version": 1,
+		"category": "Synth",
+		"initial_delay": 0,
+		"preset_chunks": false,
+		"f64_precision": false,
+		"silent_when_stopped": false
+	}
+}

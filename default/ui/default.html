@@ -1,0 +1,68 @@
+<!doctype html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>Default</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link href='https://fonts.googleapis.com/css?family=Orbitron' rel='stylesheet'>
+
+        <style type="text/css">
+            div {
+                -webkit-user-select: none; /* Safari */
+                -ms-user-select: none; /* IE 10+ and Edge */
+                user-select: none; /* Standard syntax */
+            }
+
+            body {
+                font-family: Orbitron;
+                padding-top: 10%;
+                text-align: center;
+                background-color: black;
+                color:thistle;
+            }
+
+            .title {
+                width: 80%;
+                height: 40px;
+                position: absolute;
+                top: 0;
+                display: table-cell;
+                vertical-align: top;
+                text-align: center;
+            }
+
+            .container {
+                position: fixed;
+                left: 10px;
+                top: 50px;
+                padding: 0;
+                margin: 0;
+            }
+            
+            .left-element {
+                display: inline-block;
+                float: left;
+            }
+            
+            .right-element {
+                display: inline-block;
+                padding: 10px;
+                float: left;
+            }        
+        </style>
+        
+        <script>
+            function onLoad() {
+                console.log = console.error = (str) => {
+                    sendMsg(console_msg, 0, str);
+                }
+            }        
+        </script>
+    </head>
+    <body onload=onLoad()>
+        <div class="title">
+            <h1>Default</h1>
+        </div>
+    </body>
+</html>

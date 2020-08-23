@@ -1,0 +1,33 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ui</title>
+    
+    
+    <script type="text/javascript" src="./scripts/aa.js"></script>
+<script type="text/javascript" src="./scripts/adsr.js"></script>
+<script type="text/javascript" src="./scripts/client.js"></script>
+<script type="text/javascript" src="./scripts/renderer.js"></script>
+<script type="text/javascript" src="./scripts/vector.js"></script>
+
+  
+    <script>
+    </script>
+    </head>
+  <body onload=onLoad()>
+    <script>
+      const client = new Client()
+      client.install(document.body)
+      window.addEventListener('load', () => { 
+        console.log = console.error = (str) => {
+          sendMsg(console_msg, 0, str);
+        }
+        client.start()
+      })
+    </script>
+  </body>
+</html>

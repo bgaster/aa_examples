@@ -1,0 +1,20 @@
+#!/bin/bash
+
+cat <<EOF
+#!/bin/bash
+FAUST=/Users/br-gaster/dev/wasm/faust_bgaster/build/bin/faust
+if [ \$# -eq 0 ]; then
+    echo "No arguments provided"
+    exit 1
+fi
+cat <<EOF
+EOF
+
+cat ./assets/faust_rust_prefix.rs
+echo
+echo EOF
+echo \$FAUST -lang rust \$1
+echo cat \<\<EOF
+cat ./assets/faust_rust_postfix.rs
+echo
+echo EOF
