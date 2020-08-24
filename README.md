@@ -46,9 +46,17 @@ All that said there is no requirement that each module is implemented in the sam
 
 An AA module must consist of the following:
 
-* module.json is a description of the module, which is used to load it.
-* module.wasm is an AA WASM API conforming module that implements the audio part of a module
-* 
+* **module.json** is a description of the module, which is used to load it.
+* **module.wasm** is an AA WASM API conforming module that implements the audio part of a module.
+* **module.html** (optional) UI implemented in HTML5.
+
+# Deploying a set of Audio Anywhere Modules
+
+TODO
+
+# Adding a Module
+
+TODO
 
 # License
 © 2020 [Benedict R. Gaster (cuberoo_)](https://bgaster.github.io/)
