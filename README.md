@@ -14,7 +14,7 @@ This repo contains a number of AA module examples.
 
 * Default is a do nothing module that can be loaded, well to do nothing
 * Nuke is an analogue synth based on one of the Muses instruments
-* VL1 is a fairly close emulation of the [Casio VL-1](https://en.wikipedia.org/wiki/Casio_VL-1). (No GUI for this yet, coming soon.)
+* VL1 is a fairly close emulation of the [Casio VL-1](https://en.wikipedia.org/wiki/Casio_VL-1).
 * Gain is a simple gain controller
 * More in development
 
