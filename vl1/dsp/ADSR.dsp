@@ -1,13 +1,15 @@
+declare aavoices "1";
+
 import("stdfaust.lib");
 
-gain = hslider("[9]Gain", 0.5, 0, 1, 0.01);
+gain = hslider("gain", 0.5, 0, 1, 0.01);
 
 waveforms = piano, fantasy, violin, flute,
   guitar1, guitar2, horn, electro1,
   electro2, electro3 : ba.selectn(10, wave)
 with {
-  wave = nentry("[0]Waveform", 0, 0, 9, 1);
-  freq = hslider("[8]freq", 440, 50, 2000, 0.01);
+  wave = nentry("/Waveform", 0, 0, 9, 1);
+  freq = hslider("freq", 440, 50, 2000, 0.01);
 
   piano = os.pulsetrain(freq + vibrato, 0.7) * envelope * tremelo : filter
   with{
@@ -62,26 +64,26 @@ with {
 
 vibrato = os.lf_triangle(5.7)*vdepth
 with {
-  vdepth = nentry("[5]vibrato", 0, 0, 10, 1);
+  vdepth = nentry("/Vibrato", 0, 0, 10, 1);
 };
 
 tremelo = os.lf_triangle(tremFreq)*5
 with {
-  tremFreq = nentry("[6]Tremelo", 0, 0, 10, 1);
+  tremFreq = nentry("/Tremelo", 0, 0, 10, 1);
 };
 
 pitchMod = os.lf_squarewavepos(modFreq)*-1
 with {
-  modFreq = nentry("[7]Pitch Mod", 4.5,2.7, 10, 0.365);
+  modFreq = nentry("/PitchMod", 4.5,2.7, 10, 0.365);
 };
 
-envelope = en.adsr(a,d,s,r,g)*gain
+envelope = en.adsr(a,d,s,r,g) * gain
   with {
-    a = nentry("[1]Attack", 0.05, 0.001, 0.5,0.05);
-    d = nentry("[2]Decay", 0.05, 0.001, 2, 0.2);
-    s = nentry("[3]Sustain", 0.8, 0.1, 1, 0.1);
-    r = nentry("[4]Release", 0.5, 0.001, 2, 0.2);
-    g = button("[10]Gate");
+    a = nentry("/Attack", 0.005, 0.001, 0.5,0.05);
+    d = nentry("/Decay", 0.178, 0.001, 2, 0.2);
+    s = nentry("/Sustain", 0.306, 0.1, 1, 0.1);
+    r = nentry("/Release", 0.178, 0.001, 2, 0.2);
+    g = button("gate");
   };
 
-process = waveforms <: _,_ ;
+process = vgroup("voices", par(n, 1, vgroup("aavoice%n", waveforms))) : _;

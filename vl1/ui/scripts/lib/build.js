@@ -28,7 +28,7 @@ fs.writeFileSync('index.html', cleanup(`
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>${id}</title>
-    <script src = "/js/support.js"></script>
+    <script src = "../js/support.js"></script>
     <script>
     </script>
   </head>
@@ -36,12 +36,12 @@ fs.writeFileSync('index.html', cleanup(`
     <script>
       ${libs.reduce((acc, item) => { return `${acc}// Including Library ${item}\n\n${fs.readFileSync('./scripts/lib/' + item, 'utf8')}\n` }, '')}
       ${scripts.reduce((acc, item) => { return `${acc}// Including Script ${item}\n\n${fs.readFileSync('./scripts/' + item, 'utf8')}\n` }, '')}
-      console.log = console.error = (str) => {
-        sendMsg(console_msg, 0, str);
-      }
       const client = new Client()
       client.install(document.body)
       window.addEventListener('load', () => { 
+        console.log = console.error = (str) => {
+          sendMsg(console_msg, 0, str);
+        }
         client.start()
       })
     </script>

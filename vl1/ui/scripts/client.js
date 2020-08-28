@@ -1,27 +1,22 @@
 'use strict'
 
-
 function Client () {
   this.install = function (host) {
     console.info('Client', 'Installing..')
 
     this.renderer = new Renderer(this)
-    
+
+    // add canvas to the DOM
     host.appendChild(this.renderer.el);
 
-    // host.appendChild(this.renderer.el)
+    document.addEventListener('keypress', (e) => { handleKeyPress(e) }, false );
+    document.addEventListener('mousedown', (e) => mouseDown(e, this), false)
+    document.addEventListener('mousemove', (e) => { }, false)
+    document.addEventListener('mouseup', (e) => mouseUp(e, this), false)
 
-    document.addEventListener('keypress', (e) => { this.handleKeyPress(e) }, false );
-    // document.addEventListener('mousedown', (e) => { this.cursor.down(e) }, false)
-    // document.addEventListener('mousemove', (e) => { this.cursor.move(e) }, false)
-    // document.addEventListener('contextmenu', (e) => { this.cursor.alt(e) }, false)
-    // document.addEventListener('mouseup', (e) => { this.cursor.up(e) }, false)
-    // document.addEventListener('copy', (e) => { this.copy(e) }, false)
-    // document.addEventListener('cut', (e) => { this.cut(e) }, false)
-    // document.addEventListener('paste', (e) => { this.paste(e) }, false)
-    // window.addEventListener('resize', (e) => { this.onResize() }, false)
-    // window.addEventListener('dragover', (e) => { e.stopPropagation(); e.preventDefault(); e.dataTransfer.dropEffect = 'copy' })
-    // window.addEventListener('drop', this.onDrop)
+
+    //window.addEventListener('resize', (e) => { this.onResize() }, false)
+    window.addEventListener('dragover', (e) => {  })
   }
 
   this.start = () => {
@@ -34,7 +29,6 @@ function Client () {
   }
 
   this.update = () => {
-    console.log('Client', 'Update...')
     this.renderer.update()
   }
 
@@ -44,11 +38,8 @@ function Client () {
   this.reset = () => {
   }
 
-  this.whenOpen = (file, data) => {
-  }
-
   this.getPadding = () => {
-    return { x: 60, y: 90 }
+    return { x: 0, y: 0 }
   }
 
   this.getWindowSize = () => {
@@ -67,22 +58,44 @@ function Client () {
 
   this.handleKeyPress = (e) => {
     if (e.key === "q") {
+      alert("hello");
     }
-    else if (e.key === "a") { 
+    else if (e.key === "a") {
+
     }
     else if (e.key === "w") {
+
     }
     else if (e.key === "s") {
-    } 
+
+    }
     else if (e.key === "e") {
+
     }
     else if (e.key === "d") {
-    } 
-    else if (e.key === "r") {
+
     }
-    else if (e.key === "f") {
-    } 
+    else if (e.key === "r") {
+
+    }    else if (e.key === "f") {
+
+    }
   }
+  var hold = false
+  function mouseDown(e, client) {
+    hold = true
+    client.renderer.hold = hold
+    buttonPresses(e, client);
+  }
+
+  function mouseUp(e, client){
+    hold = false
+    client.renderer.hold = hold
+    buttonUnpresses(client);
+  }
+
+
+
 
   function sizeOffset (a, b) { return { width: a.width - b.width, height: a.height - b.height } }
   function step (v, s) { return Math.round(v / s) * s }

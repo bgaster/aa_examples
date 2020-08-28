@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ui</title>
-    <script src = "/js/support.js"></script>
+    <script src = "../js/support.js"></script>
     <script>
     </script>
   </head>
@@ -15,13 +15,306 @@ function OnParamChange(param, value) {
 }
 function controlChange(ctrlTag, value) {
 }
+function sendAttack(value) {
+    sendMsg(1, 0, map(value, 0, 9, 0.001, 0.5))
+}
+function sendDecay(value) {
+    sendMsg(1, 1, map(value, 0.0, 9.0, 0.001, 2.0))
+}
+function sendPitchMod(value) {
+    sendMsg(1, 2, value)
+}
+function sendRelease(value) {
+    sendMsg(1, 3, map(value, 0.0, 9.0, 0.001, 2.0))
+}
+function sendSustain(value) {
+    sendMsg(1, 4, map(value, 0, 9, 0.1, 1.0))
+}
+function sendTremelo(value) {
+    sendMsg(1, 5, value)
+}
+function sendVibrato(value) {
+    sendMsg(1, 6, value)
+}
+function sendWaveform(value) {
+    sendMsg(1, 7, value)
+}
+function map(x, in_min, in_max, out_min, out_max) {
+    return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min
+}
+var waveform = 0
+var attack = 0
+var decay = 1
+var sustain = 2
+var release = 1
+var vibrato = 0
+var tremelo = 0
+var tempo = 0
+var octave = 1
+var params = [578,608,668,698,738,768,808,838,878,908,968,998,1048,1078,1128,1158];
+var notes = ['G1', 'A1', 'B1', 'C2', 'D2', 'E2', 'F2', 'G2', 'A2', 'B2', 'C3', 'D3', 'E3', 'F3', 'G3', 'A3', 'B3'];
+var midiG1 = 31
+currentNote = 0
+isWhite = true
+noteOnRecieved = false
+toMidi = function(note) {
+  return note + midiG1 + (octave * 12)
+}
+buttonPresses = function(e, client) {
+  for (var x = 0; x < notes.length; x++) {
+    if (e.clientX >= 333 + (x*57) && e.clientY >= 263 && e.clientX <= 363 + (x*57) && e.clientY <= 323)  {
+      sendMsg(6, 0, [toMidi(x), 127, 0])
+      currentNote = x
+      isWhite = true
+      noteOnRecieved = true
+      client.renderer.animateKeys(x, true)
+    }
+    if (e.clientX >= 364 + (x*57) && e.clientY >= 178 && e.clientX <= 389 + (x*57) && e.clientY <= 248) {
+      if (notes[x].includes("B") == false && notes[x].includes("E") == false) {
+        sendMsg(6, 0, [toMidi(x), 127, 0])
+        currentNote = x
+        isWhite = false
+        noteOnRecieved = true
+        client.renderer.animateKeys(x, false)
+      }
+    }
+  }
+  if (e.clientX >= params[0]  && e.clientY >= 108  && e.clientX <= params[0] + 20  && e.clientY <= 149) {
+    if (waveform > 0) {
+      waveform = waveform - 1
+      client.renderer.setParams(0, waveform)
+    }
+    noteOnRecieved = false
+  }
+  if (e.clientX >= params[1] && e.clientY >= 108  && e.clientX <= params[1] + 20 && e.clientY <= 149) {
+    if (waveform < 9) {
+      waveform = waveform + 1
+      client.renderer.setParams(0, waveform)
+    }
+    noteOnRecieved = false
+  }
+  if (e.clientX >= params[2] && e.clientY >= 108  && e.clientX <= params[2] + 20 && e.clientY <= 149) {
+    if (attack > 0) {
+      attack = attack - 1
+      client.renderer.setParams(1, attack)
+    }
+    noteOnRecieved = false
+  }
+  if (e.clientX >= params[3] && e.clientY >= 108 && e.clientX <= params[3] + 20 && e.clientY <= 149) {
+    if (attack < 9) {
+      attack = attack + 1
+      client.renderer.setParams(1, attack)
+    }
+    noteOnRecieved = false
+  }
+  if (e.clientX >= params[4] && e.clientY >= 108 && e.clientX <= params[4] + 20 && e.clientY <= 149) {
+    if (decay > 0) {
+      decay = decay - 1
+      client.renderer.setParams(2, decay)
+    }
+    noteOnRecieved = false
+  }
+  if (e.clientX >= params[5] && e.clientY >= 108 && e.clientX <= params[5] + 20 && e.clientY <= 149) {
+    if (decay < 9) {
+      decay = decay + 1
+      client.renderer.setParams(2, decay)
+    }
+    noteOnRecieved = false
+  }
+  if (e.clientX >= params[6] && e.clientY >= 108 && e.clientX <= params[6] + 20 && e.clientY <= 149) {
+    if (sustain > 0) {
+      sustain = sustain - 1
+      client.renderer.setParams(3, sustain)
+    }
+    noteOnRecieved = false
+  }
+  if (e.clientX >= params[7] && e.clientY >= 108 && e.clientX <= params[7] + 20 && e.clientY <= 149) {
+    if (sustain < 9) {
+      sustain = sustain + 1
+      client.renderer.setParams(3, sustain)
+    }
+    noteOnRecieved = false
+  }
+  if (e.clientX >= params[8] && e.clientY >= 108 && e.clientX <= params[8] + 20 && e.clientY <= 149) {
+    if (release > 0) {
+      release = release - 1
+      client.renderer.setParams(4, release)
+    }
+    noteOnRecieved = false
+  }
+  if (e.clientX >= params[9] && e.clientY >= 108 && e.clientX <= params[9] + 20 && e.clientY <= 149) {
+    if (release < 9) {
+      release = release + 1
+      client.renderer.setParams(4, release)
+    }
+    noteOnRecieved = false
+  }
+  if (e.clientX >= params[10] && e.clientY >= 108 && e.clientX <= params[10] + 20 && e.clientY <= 149) {
+    if (vibrato > 0) {
+      vibrato = vibrato - 1
+      client.renderer.setParams(5, vibrato)
+    }
+    noteOnRecieved = false
+  }
+  if (e.clientX >= params[11] && e.clientY >= 108 && e.clientX <= params[11] + 20 && e.clientY <= 149) {
+    if (vibrato < 9) {
+      vibrato = vibrato + 1
+      client.renderer.setParams(5, vibrato)
+    }
+    noteOnRecieved = false
+  }
+  if (e.clientX >= params[12] && e.clientY >= 108 && e.clientX <= params[12] + 20 && e.clientY <= 149) {
+    if (tremelo > 0) {
+      tremelo = tremelo - 1
+      client.renderer.setParams(6, tremelo)
+    }
+    noteOnRecieved = false
+  }
+  if (e.clientX >= params[13] && e.clientY >= 108 && e.clientX <= params[13] + 20 && e.clientY <= 149) {
+    if (tremelo < 9) {
+      tremelo = tremelo + 1
+      client.renderer.setParams(6, tremelo)
+    }
+    noteOnRecieved = false
+  }
+  if (e.clientX >= params[14] && e.clientY >= 108 && e.clientX <= params[14] + 20 && e.clientY <= 149) {
+    if (tempo > 0) {
+      tempo = tempo - 1
+      client.renderer.setParams(7, tempo)
+    }
+    noteOnRecieved = false
+  }
+  if (e.clientX >= params[15] && e.clientY >= 108 && e.clientX <= params[15] + 20 && e.clientY <= 149) {
+    if (tempo < 19) {
+      tempo = tempo + 1
+      client.renderer.setParams(7, tempo)
+    }
+    noteOnRecieved = false
+  }
+  if (e.clientX >= 593 && e.clientY >= 53 && e.clientX <= 633 && e.clientY <= 73) {
+    waveform = 0
+    client.renderer.setParams(0, waveform)
+    attack = 0
+    client.renderer.setParams(1, attack)
+    decay = 1
+    client.renderer.setParams(2, decay)
+    sustain = 2
+    client.renderer.setParams(3, sustain)
+    release = 1
+    client.renderer.setParams(4, release)
+    vibrato = 0
+    client.renderer.setParams(5, vibrato)
+    tremelo = 0
+    client.renderer.setParams(6, tremelo)
+    noteOnRecieved = false
+  }
+  if (e.clientX >= 663 && e.clientY >= 53 && e.clientX <= 703 && e.clientY <= 73) {
+    waveform = 1
+    client.renderer.setParams(0, waveform)
+    attack = 0
+    client.renderer.setParams(1, attack)
+    decay = 0
+    client.renderer.setParams(2, decay)
+    sustain = 7
+    client.renderer.setParams(3, sustain)
+    release = 5
+    client.renderer.setParams(4, release)
+    vibrato = 9
+    client.renderer.setParams(5, vibrato)
+    tremelo = 0
+    client.renderer.setParams(6, tremelo)
+    noteOnRecieved = false
+  }
+  if (e.clientX >= 733 && e.clientY >= 53 && e.clientX <= 773 && e.clientY <= 73) {
+    waveform = 2
+    client.renderer.setParams(0, waveform)
+    attack = 1
+    client.renderer.setParams(1, attack)
+    decay = 0
+    client.renderer.setParams(2, decay)
+    sustain = 7
+    client.renderer.setParams(3, sustain)
+    release = 1
+    client.renderer.setParams(4, release)
+    vibrato = 5
+    client.renderer.setParams(5, vibrato)
+    tremelo = 0
+    client.renderer.setParams(6, tremelo)
+    noteOnRecieved = false
+  }
+  if (e.clientX >= 803 && e.clientY >= 53 && e.clientX <= 843 && e.clientY <= 73) {
+    waveform = 3
+    client.renderer.setParams(0, waveform)
+    attack = 1
+    client.renderer.setParams(1, attack)
+    decay = 0
+    client.renderer.setParams(2, decay)
+    sustain = 7
+    client.renderer.setParams(3, sustain)
+    release = 1
+    client.renderer.setParams(4, release)
+    vibrato = 3
+    client.renderer.setParams(5, vibrato)
+    tremelo = 0
+    client.renderer.setParams(6, tremelo)
+    noteOnRecieved = false
+  }
+  if (e.clientX >= 873 && e.clientY >= 53 && e.clientX <= 913 && e.clientY <= 73) {
+    client.renderer.setParams(0, waveform)
+    attack = 4
+    client.renderer.setParams(1, attack)
+    decay = 1
+    client.renderer.setParams(2, decay)
+    sustain = 0
+    client.renderer.setParams(3, sustain)
+    release = 7
+    client.renderer.setParams(4, release)
+    vibrato = 0
+    client.renderer.setParams(5, vibrato)
+    tremelo = 0
+    client.renderer.setParams(6, tremelo)
+    noteOnRecieved = false
+  }
+  if (e.clientX >= 1028 && e.clientY >= 53 && e.clientX <= 1028 + 40 && e.clientY <= 53 + 20) {
+    if (octave > 0) {
+      octave = octave - 1
+      console.log("- Octave")
+      console.log(octave)
+      client.renderer.setParams(8, octave)
+    }
+    noteOnRecieved = false
+  }
+  if (e.clientX >= 1088 && e.clientY >= 53 && e.clientX <= 1088 + 40 && e.clientY <= 53 + 20) {
+    if (octave < 2) {
+      octave = octave + 1
+      client.renderer.setParams(8, octave)
+    }
+    noteOnRecieved = false
+  }
+}
+buttonUnpresses = function(client){
+  if (noteOnRecieved == true) {
+    if (isWhite == true) {
+      client.renderer.animateKeys(currentNote, true)
+    }
+    else {
+      client.renderer.animateKeys(currentNote, false)
+    }
+    sendMsg(7, 0, [toMidi(currentNote), 127, 0])
+  }
+  noteOnRecieved == false
+}
 'use strict'
 function Client () {
   this.install = function (host) {
     console.info('Client', 'Installing..')
     this.renderer = new Renderer(this)
     host.appendChild(this.renderer.el);
-    document.addEventListener('keypress', (e) => { this.handleKeyPress(e) }, false );
+    document.addEventListener('keypress', (e) => { handleKeyPress(e) }, false );
+    document.addEventListener('mousedown', (e) => mouseDown(e, this), false)
+    document.addEventListener('mousemove', (e) => { }, false)
+    document.addEventListener('mouseup', (e) => mouseUp(e, this), false)
+    window.addEventListener('dragover', (e) => {  })
   }
   this.start = () => {
     console.log('Client', 'Starting..')
@@ -30,17 +323,14 @@ function Client () {
     setTimeout(() => { document.body.className += ' ready' }, 250)
   }
   this.update = () => {
-    console.log('Client', 'Update...')
     this.renderer.update()
   }
   this.clear = () => {
   }
   this.reset = () => {
   }
-  this.whenOpen = (file, data) => {
-  }
   this.getPadding = () => {
-    return { x: 60, y: 90 }
+    return { x: 0, y: 0 }
   }
   this.getWindowSize = () => {
     return { width: window.innerWidth, height: window.innerHeight }
@@ -55,29 +345,42 @@ function Client () {
   }
   this.handleKeyPress = (e) => {
     if (e.key === "q") {
+      alert("hello");
     }
-    else if (e.key === "a") { 
+    else if (e.key === "a") {
     }
     else if (e.key === "w") {
     }
     else if (e.key === "s") {
-    } 
+    }
     else if (e.key === "e") {
     }
     else if (e.key === "d") {
-    } 
-    else if (e.key === "r") {
     }
-    else if (e.key === "f") {
-    } 
+    else if (e.key === "r") {
+    }    else if (e.key === "f") {
+    }
+  }
+  var hold = false
+  function mouseDown(e, client) {
+    hold = true
+    client.renderer.hold = hold
+    buttonPresses(e, client);
+  }
+  function mouseUp(e, client){
+    hold = false
+    client.renderer.hold = hold
+    buttonUnpresses(client);
   }
   function sizeOffset (a, b) { return { width: a.width - b.width, height: a.height - b.height } }
   function step (v, s) { return Math.round(v / s) * s }
 }
 /*
- * 
+ *
  */
 'use strict'
+this.hold = false
+this.currentKey = 0
 function Renderer (client) {
     this.el = document.createElement('canvas')
     this.el.id = 'guide'
@@ -88,11 +391,27 @@ function Renderer (client) {
     this.context = this.el.getContext('2d')
     this.showExtras = true
     this.scale = 1 //window.devicePixelRatio
+    this.param1 = 0.05
+    this.controlParam1 = (v) => {
+        let mv = map(v, 0, 127, 0.08, 4.0)
+        this.param1 = mv
+        return mv
+    }
+    const offwhite = "#fffddd"
     const red = "#DD4A22"
     const yellow = "#F3B83C"
     const blue = "#6060A6"
     const rose = "#FFBDB0"
     const rootbeer = "#1f0c07"
+    const black = "#000000"
+    const shadow = "#a2a2a2"
+    const shadower = "#626262"
+    const white = "#ffffff"
+    const display = "#5c5c3d"
+    const moreoff = "#ffffcc"
+    const redd = "#ff0000"
+    const orange = "#ff8600"
+    const blue2 = "#0020ff"
     this.start = function () {
         this.update()
     }
@@ -102,7 +421,7 @@ function Renderer (client) {
     }
     this.draw = function() {
         this.clear()
-        this.drawDots()
+        this.drawKey()
     }
     this.clear = function () {
         this.context.clearRect(0, 0, this.el.width * this.scale, this.el.height * this.scale);
@@ -123,71 +442,312 @@ function Renderer (client) {
         this.el.style.width = (_target.width) + 'px'
         this.el.style.height = (_target.height) + 'px'
     }
-    this.drawDots = function() {
-        var style = { color: "#d3d3d3", thickness: 6.0, strokeLinecap: "round", strokeLinejoin: "round"}
-        this.setStyle(style)
-        this.context.beginPath()
-        this.context.moveTo(286.6, 29.2)
-        this.context.lineTo(287.0, 29.2)
-        this.context.stroke()
-        this.context.moveTo(193.4, 29.2);
-        this.context.lineTo(193.7, 29.2);
-        this.context.stroke();
-        this.context.beginPath();
-        this.context.moveTo(286.6, 79.4);
-        this.context.lineTo(287.0, 79.4);
-        this.context.stroke();
-        this.context.beginPath();
-        this.context.moveTo(193.4, 79.4);
-        this.context.lineTo(193.7, 79.4);
-        this.context.stroke();
-        this.context.beginPath();
-        this.context.moveTo(286.6, 110.7);
-        this.context.lineTo(287.0, 110.7);
-        this.context.stroke();
-        this.context.beginPath();
-        this.context.moveTo(193.4, 110.7);
-        this.context.lineTo(193.7, 110.7);
-        this.context.stroke();
-        this.context.beginPath();
-        this.context.moveTo(286.6, 202.0);
-        this.context.lineTo(287.0, 202.0);
-        this.context.stroke();
-        this.context.beginPath();
-        this.context.moveTo(193.4, 202.0);
-        this.context.lineTo(193.7, 202.0);
-        this.context.stroke();
-        this.context.beginPath();
-        this.context.moveTo(153.8, 217.5);
-        this.context.lineTo(154.1, 217.5);
-        this.context.stroke();
-        this.context.beginPath();
-        this.context.moveTo(33.0, 217.5);
-        this.context.lineTo(33.4, 217.5);
-        this.context.stroke();
-        this.context.beginPath();
-        this.context.moveTo(153.8, 82.3);
-        this.context.lineTo(154.1, 82.3);
-        this.context.stroke();
-        this.context.beginPath();
-        this.context.moveTo(33.0, 82.3);
-        this.context.lineTo(33.4, 82.3);
-        this.context.stroke();
-        this.context.beginPath();
-        this.context.moveTo(153.8, 22.3);
-        this.context.lineTo(154.1, 22.3);
-        this.context.stroke();
-        this.context.beginPath();
-        this.context.moveTo(33.0, 22.3);
-        this.context.lineTo(33.4, 22.3);
-        this.context.stroke();
+    this.aButton = function(x, y, colour) {
+      this.context.beginPath();
+      this.context.fillStyle = colour;
+      this.context.fillRect(x, y, 20, 40);
+      this.context.lineStyle = shadow;
+      this.context.lineWidth = 2;
+      this.context.moveTo(x+1, y+40);
+      this.context.lineTo(x+20, y+40);
+      this.context.lineTo(x+20, y+1);
+      this.context.stroke();
     }
-    this.drawVertex = function (pos, radius = 5) {
+    var isWhite = true
+    var animatedColour = white
+    this.animateKeys = function(x, aWhite){
+      this.currentKey = x
+      if (aWhite == true) {
+        isWhite = true
+        if (this.hold == true) {
+          animatedColour = shadow
+        }
+        if (this.hold == false) {
+          animatedColour = white
+        }
+      }
+      if (aWhite == false) {
+        isWhite = false
+        if (this.hold == true) {
+          animatedColour = shadow
+        }
+        if (this.hold == false) {
+          animatedColour = black
+        }
+      }
+    }
+    this.waveform = 0
+    this.attack = 0
+    this.decay = 1
+    this.sustain = 2
+    this.release = 1
+    this.vibrato = 0
+    this.tremelo = 0
+    this.tempo = 0
+    this.octave = 1
+    this.setParams = function(param, value) {
+      if (param == 0) {
+        this.waveform = value
+        sendWaveform(value)
+      }
+      if (param == 1) {
+        this.attack = value
+        sendAttack(value)
+      }
+      if (param == 2) {
+        this.decay = value
+        sendDecay(value)
+      }
+      if (param == 3) {
+        this.sustain = value
+        sendSustain(value)
+      }
+      if (param == 4) {
+        this.release = value
+        sendRelease(value)
+      }
+      if (param == 5) {
+        this.vibrato = value
+        sendVibrato(value)
+      }
+      if (param == 6) {
+        this.tremelo = value
+        sendTremelo(value)
+      }
+      if (param == 7) {
+        this.tempo = value
+      }
+      if (param == 8) {
+        this.octave = octave
+      }
+    }
+    this.drawKey = function() {
+        var style = { color: offwhite, thickness: 6.0, strokeLinecap: "round", strokeLinejoin: "round"}
+        this.setStyle(style)
+        this.context.strokeStyle = offwhite;
+        this.context.beginPath();
+        this.context.moveTo(50, 20);
+        this.context.lineTo(1270, 20);
+        this.context.bezierCurveTo(1270, 20, 1300, 30, 1300, 60);
+        this.context.lineTo(1300, 300);
+        this.context.bezierCurveTo(1300, 300, 1300, 340, 1280, 340);
+        this.context.lineTo(60, 340);
+        this.context.bezierCurveTo(60, 340, 40, 335, 30, 300);
+        this.context.lineTo(30, 60);
+        this.context.bezierCurveTo(30, 60, 30, 20, 50, 20);
+        this.context.closePath();
+        this.context.fillStyle = moreoff;
+        this.context.fill();
+        this.context.stroke();
+        this.context.beginPath();
+        this.context.strokeStyle = shadow;
+        this.context.lineWidth = 3;
+        this.context.moveTo(55, 45);
+        for (var x = 0; x < 28; x++) {
+          this.context.lineTo(255, (x*10)+45);
+          this.context. moveTo(55, ((x+1)*10)+45);
+        }
+        this.context.stroke();
+        this.context.beginPath();
+        this.context.strokeStyle = black;
+        this.context.lineWidth = 3;
+        this.context.strokeRect(55, 35, 200, 290);
+        this.context.beginPath();
+        this.context.strokeStyle = black;
+        this.context.lineWidth =2;
+        this.context.moveTo(55, 43);
+        for (var x = 0; x < 28; x++) {
+          this.context.lineTo(255, (x*10)+43);
+          this.context. moveTo(55, ((x+1)*10)+43);
+        }
+        this.context.stroke();
+        this.context.fillStyle = black;
+        this.context.fillRect(285, 16, 270, 140);
+        this.context.stroke();
+        this.context.fillStyle = display;
+        this.context.fillRect(310, 60, 220, 60);
+        this.context.stroke();
+        this.context.beginPath();
+        this.context.strokeStyle = black;
+        this.context.lineWidth = 1;
+        this.context.moveTo(310, 62);
+        this.context.lineTo(530,62);
+        this.context.stroke();
+        this.context.beginPath();
+        this.context.strokeStyle = white;
+        this.context.lineWidth = 2;
+        this.context.moveTo(285, 20);
+        this.context.lineTo(555,20);
+        this.context.moveTo(285, 24);
+        this.context.lineTo(555,24);
+        this.context.stroke();
+        this.context.beginPath();
+        this.context.strokeStyle = shadow;
+        this.context.lineWidth = 4;
+        this.context.moveTo(286, 30);
+        this.context.lineTo(554,30);
+        this.context.stroke();
         this.context.beginPath()
-        this.context.lineWidth = 2
-        this.context.arc((pos.x * this.scale), (pos.y * this.scale), radius, 0, 2 * Math.PI, false)
-        this.context.fill()
-        this.context.closePath()
+        this.context.lineWidth = 2;
+        this.context.moveTo(286, 150);
+        this.context.lineTo(554, 150);
+        this.context.stroke();
+        this.context.font = "bold 14px Arial"
+        this.context.fillStyle = shadow;
+        this.context.fillText("CASIO", 370, 50);
+        this.context.stroke();
+        this.context.font = "11px Arial"
+        this.context.fillStyle = shadow;
+        this.context.fillText("VL-TONE", 420, 50);
+        this.context.stroke();
+        this.context.font = "8px Arial"
+        this.context.fillStyle = shadow;
+        this.context.fillText("ELECTRONIC   MUSICAL   INSTRUMENT     VL-1", 335, 140);
+        this.context.stroke();
+        this.context.beginPath();
+        this.context.strokeStyle = shadow;
+        this.context.lineWidth =3;
+        this.context.moveTo(285, 173);
+        this.context.lineTo(1304, 173);
+        this.context.moveTo(288, 173);
+        this.context.lineTo(288, 343);
+        this.context.stroke();
+        this.context.lineWidth = 2;
+        this.context.moveTo(307, 173);
+        this.context.lineTo(307, 343);
+        this.context.moveTo(1285, 173);
+        this.context.lineTo(1285, 341);
+        this.context.stroke();
+        this.context.beginPath();
+        this.context.strokeStyle = black;
+        this.context.lineWidth =3;
+        this.context.moveTo(285, 345);
+        this.context.lineTo(285, 170);
+        this.context.lineTo(1305, 170);
+        this.context.stroke();
+        this.context.beginPath();
+        this.context.fillStyle = white;
+        var notes = ['G1', 'A1', 'B1', 'C2', 'D2', 'E2', 'F2', 'G2', 'A2', 'B2', 'C3', 'D3', 'E3', 'F3', 'G3', 'A3', 'B3'];
+        for (var x = 0; x < notes.length; x++) {
+          this.context.fillStyle = white;
+          this.context.fillRect(325 + (x*57), 255, 30, 60);
+          if (notes[x].includes("G") || notes[x].includes("A") || notes[x].includes("C") || notes[x].includes("D") || notes[x].includes("F")) {
+            this.context.fillStyle = black;
+            this.context.fillRect(356 + (x*57), 170, 25, 70);
+          }
+          if (x == this.currentKey && isWhite == true){
+            this.context.fillStyle = animatedColour;
+            this.context.fillRect(325 + (x*57), 255, 30, 60);
+          }
+          if (x == this.currentKey && isWhite == false){
+            this.context.fillStyle = animatedColour;
+            this.context.fillRect(356 + (x*57), 170, 25, 70);
+          }
+        }
+        for (var x = 0; x < notes.length; x++) {
+          this.context.strokeStyle = shadow;
+          this.context.lineWidth = 2;
+          var aPoint = 325 + (x*57);
+          this.context.moveTo(aPoint, 315);
+          this.context.lineTo(aPoint + 30, 315);
+          this.context.lineTo(aPoint + 30, 255);
+          if (notes[x].includes("G") || notes[x].includes("A") || notes[x].includes("C") || notes[x].includes("D") || notes[x].includes("F")) {
+            this.context.moveTo((357 + (x*57)), 241);
+            this.context.lineTo((357 + (x*57)) + 25, 241);
+            this.context.lineTo((357 + (x*57)) + 25, 172);
+          }
+          this.context.stroke();
+        }
+        var buttonXs = [[570,redd],[600,redd],[660,white],[690,white],[730,white],[760,white],[800,white],[830,white],[870,white],[900,white],[960,orange],[990,orange],[1040,blue2],[1070,blue2],[1120,rose],[1150,rose]];
+        for (var x  = 0; x < buttonXs.length; x++) {
+          this.context.strokeStyle = shadow
+          this.context.lineWidth = 2
+          this.aButton(buttonXs[x][0], 100, buttonXs[x][1]);
+          this.context.beginPath();
+          this.context.strokeStyle = black
+          this.context.lineWidth = 1
+          this.context.moveTo(buttonXs[x][0] + 5, 120);
+          this.context.lineTo(buttonXs[x][0] + 15, 120);
+          if (x % 2 != 0) {
+            this.context.moveTo(buttonXs[x][0] + 10, 115);
+            this.context.lineTo(buttonXs[x][0] + 10, 125);
+          }
+          this.context.stroke();
+        }
+        this.context.beginPath();
+        this.context.fillStyle = shadow;
+        this.context.strokeStyle = shadower
+        this.context.lineWidth = 2;
+        for (var x  = 0; x <5; x++) {
+          this.context.fillRect(585 + 70*x, 45, 40, 20);
+          this.context.moveTo(586+70*x, 45+20);
+          this.context.lineTo(625+70*x, 45+20);
+          this.context.lineTo(625+70*x, 45+1);
+          this.context.stroke();
+        }
+        this.context.beginPath()
+        this.context.fillRect(1020, 45, 40, 20);
+        this.context.moveTo(1020, 45+20);
+        this.context.lineTo(1060, 45+20);
+        this.context.lineTo(1060, 45+1);
+        this.context.fillRect(1080, 45, 40, 20);
+        this.context.moveTo(1080, 45+20);
+        this.context.lineTo(1120, 45+20);
+        this.context.lineTo(1120, 45+1);
+        this.context.stroke();
+        this.context.beginPath();
+        this.context.moveTo(1020 + 15, 55);
+        this.context.lineTo(1020 + 25, 55);
+        this.context.moveTo(1085 + 15, 50);
+        this.context.lineTo(1085 + 15, 60);
+        this.context.moveTo(1080 + 15, 55);
+        this.context.lineTo(1080 + 25, 55);
+        this.context.font = "11px Arial"
+        this.context.fillStyle = black;
+        this.context.fillText("Waveform", buttonXs[0][0], 157);
+        this.context.fillText("Attack", buttonXs[2][0]+12, 157);
+        this.context.fillText("Decay", buttonXs[4][0]+11, 157);
+        this.context.fillText("Sustain", buttonXs[6][0]+9, 157);
+        this.context.fillText("Release", buttonXs[8][0]+8, 157);
+        this.context.fillText("Vibrato", buttonXs[10][0]+8, 157);
+        this.context.fillText("Tremelo", buttonXs[12][0]+7, 157);
+        this.context.fillText("Tempo", buttonXs[14][0]+11, 157);
+        this.context.fillText("Volume", 1217, 157)
+        this.context.fillText("Piano", 593, 80);
+        this.context.fillText("Fantasy", 656, 80);
+        this.context.fillText("Violin", 732, 80);
+        this.context.fillText("Flute", 803, 80);
+        this.context.fillText("Guitar", 871, 80);
+        this.context.fillText("Octave", 1052, 80);
+        this.context.stroke();
+        this.context.font = "40px Arial"
+        this.context.fillStyle = black;
+        this.context.fillText(this.waveform, 320, 108)
+        this.context.fillText(this.attack, 350, 108)
+        this.context.fillText(this.decay, 380, 108)
+        this.context.fillText(this.sustain, 410, 108)
+        this.context.fillText(this.release, 440, 108)
+        this.context.fillText(this.vibrato, 470, 108)
+        this.context.fillText(this.tremelo, 500, 108)
+        this.context.stroke();
+        this.context.beginPath();
+        this.context.lineWidth = 7
+        this.context.strokeStyle = black
+        this.context.moveTo(1235, 138);
+        this.context.lineTo(1235, 44);
+        this.context.stroke();
+        this.context.beginPath()
+        this.context.fillStyle = shadow
+        this.context.fillRect(1225, 54, 20, 30)
+        this.context.lineWidth = 1
+        this.context.strokeStyle = black
+        this.context.moveTo(1225, 54 + 15)
+        this.context.lineTo(1245, 54 + 15)
+        this.context.moveTo(1225, 54 + 10)
+        this.context.lineTo(1245, 54 + 10)
+        this.context.moveTo(1225, 54 + 20)
+        this.context.lineTo(1245, 54 + 20)
+        this.context.stroke()
     }
     this.setStyle = function(style) {
         this.context.strokeStyle = style.color
@@ -206,11 +766,11 @@ function Renderer (client) {
         this.context.fill(p)
         }
         this.context.save()
-        if (style.strokeLineDash) { 
-            this.context.setLineDash(style.strokeLineDash) 
-        } 
-        else { 
-            this.context.setLineDash([]) 
+        if (style.strokeLineDash) {
+            this.context.setLineDash(style.strokeLineDash)
+        }
+        else {
+            this.context.setLineDash([])
         }
         this.context.stroke(p)
         this.context.restore()
@@ -258,12 +818,12 @@ function Vector(x, y) {
     	}
     });
 };
-      console.log = console.error = (str) => {
-        sendMsg(console_msg, 0, str);
-      }
       const client = new Client()
       client.install(document.body)
       window.addEventListener('load', () => { 
+        console.log = console.error = (str) => {
+          sendMsg(console_msg, 0, str);
+        }
         client.start()
       })
     </script>
