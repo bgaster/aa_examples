@@ -8,6 +8,8 @@ Details about the project can be found on the [project's homepage](https://muses
 
 ## Introduction
 
+<img src="./images/vl1-emulation-screenshot.png" style="width:220px;">
+
 This repo contains a number of AA module examples. 
 
 * Default is a do nothing module that can be loaded, well to do nothing
