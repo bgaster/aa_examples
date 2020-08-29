@@ -9,9 +9,9 @@ process = vgroup("voices", par(n, 2, vgroup("aavoice%n", voice))) :> _ ;
 
 voice = hgroup("midi", ( multi_osc(osc1_freq) , multi_osc(osc2_freq) ) <: mixer :> VCF :  *(envelope) )
 with {
-  midigate	= button ("gate");
+  midigate	= button ("gate"): si.smoo;
   midifreq	= hslider("freq", 440, 20, 1000, 1);
-  midigain	= hslider("gain", 1, 0, 1, 1/127);
+  midigain	= hslider("gain", 1, 0, 1, 1/127): si.smoo;
 
   // Filter
   flt = hslider("/Filter",0.5, 0, 1, 0.01) : si.smoo;

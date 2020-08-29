@@ -2,7 +2,7 @@ declare aavoices "1";
 
 import("stdfaust.lib");
 
-gain = hslider("gain", 0.5, 0, 1, 0.01);
+gain = hslider("gain", 0.5, 0, 1, 0.01): si.smoo;
 
 waveforms = piano, fantasy, violin, flute,
   guitar1, guitar2, horn, electro1,
@@ -83,7 +83,7 @@ envelope = en.adsr(a,d,s,r,g) * gain
     d = nentry("/Decay", 0.178, 0.001, 2, 0.2);
     s = nentry("/Sustain", 0.306, 0.1, 1, 0.1);
     r = nentry("/Release", 0.178, 0.001, 2, 0.2);
-    g = button("gate");
+    g = button("gate") : si.smoo;
   };
 
 process = vgroup("voices", par(n, 1, vgroup("aavoice%n", waveforms))) : _;
