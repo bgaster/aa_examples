@@ -1,0 +1,27 @@
+{
+	"wasm_url": "/reflect/reflect.wasm",
+	"gui": { 
+		"url": "/reflect/reflect.html",
+		"name": "Reflect WASM",
+		"params": [1.0, 0.0, 0.5, 0.0],
+		"width": 640,
+		"height": 320
+	},
+	"info": {
+		"name": "REFLECT",
+		"vendor": "cuberoo_",
+		"presets": 1,
+		"parameters": 0,
+		"inputs": 1,
+		"outputs": 2,
+		"midi_inputs": 0,
+		"midi_outputs": 0,
+		"id": 9614,
+		"version": 1,
+		"category": "Effect",
+		"initial_delay": 0,
+		"preset_chunks": false,
+		"f64_precision": false,
+		"silent_when_stopped": false
+	}
+}

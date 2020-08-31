@@ -173,6 +173,7 @@ static mut ENGINE : mydsp = mydsp {
 	fConst23: 0.0,
 	fConst24: 0.0,
 	fConst25: 0.0,
+	fConst26: 0.0,
 	fRec15: [0.0;3],
 	fRec16: [0.0;3],
 	fEntry7: 0.0,
@@ -188,8 +189,8 @@ static mut ENGINE : mydsp = mydsp {
 	fVec17: [0.0;2],
 	fVec18: [0.0;4096],
 	fRec20: [0.0;3],
-	fConst26: 0.0,
 	fConst27: 0.0,
+	fConst28: 0.0,
 	fRec22: [0.0;3],
 	next_allocated_voice_age: 1000000000,
 	next_unallocated_voice_age: 0,
@@ -267,6 +268,7 @@ struct mydsp {
 	fConst23: f32,
 	fConst24: f32,
 	fConst25: f32,
+	fConst26: f32,
 	fRec15: [f32;3],
 	fRec16: [f32;3],
 	fEntry7: f32,
@@ -282,8 +284,8 @@ struct mydsp {
 	fVec17: [f32;2],
 	fVec18: [f32;4096],
 	fRec20: [f32;3],
-	fConst26: f32,
 	fConst27: f32,
+	fConst28: f32,
 	fRec22: [f32;3],
 
 	next_allocated_voice_age: i64,
@@ -363,6 +365,7 @@ impl mydsp {
 			fConst23: 0.0,
 			fConst24: 0.0,
 			fConst25: 0.0,
+			fConst26: 0.0,
 			fRec15: [0.0;3],
 			fRec16: [0.0;3],
 			fEntry7: 0.0,
@@ -378,8 +381,8 @@ impl mydsp {
 			fVec17: [0.0;2],
 			fVec18: [0.0;4096],
 			fRec20: [0.0;3],
-			fConst26: 0.0,
 			fConst27: 0.0,
+			fConst28: 0.0,
 			fRec22: [0.0;3],
 				next_allocated_voice_age: 1000000000,
 				next_unallocated_voice_age: 0,
@@ -610,10 +613,11 @@ impl mydsp {
 		self.fConst21 = (0.625 * self.fConst0);
 		self.fConst22 = (1.0 - ((1.0 - self.fConst11) / self.fConst10));
 		self.fConst23 = (1.0 / (((self.fConst2 + 0.5) / self.fConst1) + 1.0));
-		self.fConst24 = (0.125 * self.fConst0);
-		self.fConst25 = (((self.fConst2 + -0.5) / self.fConst1) + 1.0);
-		self.fConst26 = (1.0 / (((self.fConst11 + 0.100000001) / self.fConst10) + 1.0));
-		self.fConst27 = (((self.fConst11 + -0.100000001) / self.fConst10) + 1.0);
+		self.fConst24 = (0.416666657 * self.fConst0);
+		self.fConst25 = (0.125 * self.fConst0);
+		self.fConst26 = (((self.fConst2 + -0.5) / self.fConst1) + 1.0);
+		self.fConst27 = (1.0 / (((self.fConst11 + 0.100000001) / self.fConst10) + 1.0));
+		self.fConst28 = (((self.fConst11 + -0.100000001) / self.fConst10) + 1.0);
 	}
 	fn instance_init(&mut self, sample_rate: i32) {
 		self.instance_constants(sample_rate);
@@ -651,17 +655,39 @@ impl mydsp {
 		self.voice_gate[0] = self.get_param_info("gate_v0").index as u32;
 	}
 	pub fn handle_note_on(&mut self, mn: Note, vel: f32) {
-		// set params for voice
-		self.set_param(self.voice_gate[0], 1.0);
-		self.set_param(self.voice_gain[0], vel);
-		self.set_param(self.voice_freq[0], to_freq(mn));
+		let mut allocated_voice = 0;
+		let mut allocated_voice_age = self.voices[allocated_voice].voice_age;
+		// find the oldest voice to reuse
+		for i in 0..1 {
+			let age = self.voices[i].voice_age;
+			if age < allocated_voice_age {
+				allocated_voice_age = age;
+				allocated_voice = i;
+			}
+		}
+		// update the VoiceInfo for our chosen voice
+		self.voices[allocated_voice].channel   = 0;
+		self.voices[allocated_voice].note      = mn;
+		self.voices[allocated_voice].voice_age = self.next_allocated_voice_age;
+		self.next_allocated_voice_age          = self.next_allocated_voice_age + 1;// set params for choosen voice
+		self.set_param(self.voice_gate[allocated_voice], 1.0);
+		self.set_param(self.voice_gain[allocated_voice], vel);
+		self.set_param(self.voice_freq[allocated_voice], to_freq(mn));
 	}
+
 	pub fn handle_note_off(&mut self, mn: Note, vel: f32) {
-		// set params for voice
-		self.set_param(self.voice_gate[0], 0.0);
-		self.set_param(self.voice_gain[0], vel);
-			
+		for voice in 0..1 {
+			if self.voices[voice].note == mn {
+				// mark voice as being unused
+				self.voices[voice].voice_age = self.next_unallocated_voice_age;
+				self.next_unallocated_voice_age = self.next_unallocated_voice_age + 1;
+				// set params for choosen voice
+				self.set_param(self.voice_gate[voice], 0.0);
+				self.set_param(self.voice_gain[voice], vel);
+			}
+		}
 	}
+
 	fn init_buffers(&self) {
 		unsafe {
 			OUTPUTS[0] = OUT_BUFFER0.as_mut_ptr();
@@ -818,18 +844,18 @@ impl mydsp {
 			let mut iTemp51: i32 = (fTemp50 as i32);
 			let mut fTemp52: f32 = f32::floor(fTemp50);
 			self.fRec13[0] = ((self.fConst21 * (fTemp17 * (((fTemp46 - (self.fVec11[((self.IOTA - iTemp48) & 4095) as usize] * (fTemp49 + (1.0 - fTemp47)))) - ((fTemp47 - fTemp49) * self.fVec11[((self.IOTA - (iTemp48 + 1)) & 4095) as usize])) + ((fTemp46 - (self.fVec11[((self.IOTA - iTemp51) & 4095) as usize] * (fTemp52 + (1.0 - fTemp50)))) - ((fTemp50 - fTemp52) * self.fVec11[((self.IOTA - (iTemp51 + 1)) & 4095) as usize]))))) - (self.fConst20 * ((self.fConst22 * self.fRec13[2]) + (self.fConst19 * self.fRec13[1]))));
-			let mut fTemp53: f32 = f32::max(0.0, f32::min(2047.0, (self.fConst24 / fTemp42)));
-			let mut fTemp54: f32 = f32::floor(fTemp53);
-			let mut iTemp55: i32 = (fTemp53 as i32);
-			let mut fTemp56: f32 = (0.0 - (self.fConst13 * (((fTemp53 - fTemp54) * self.fVec11[((self.IOTA - (iTemp55 + 1)) & 4095) as usize]) - (fTemp46 - (self.fVec11[((self.IOTA - iTemp55) & 4095) as usize] * (fTemp54 + (1.0 - fTemp53)))))));
-			let mut fTemp57: f32 = f32::max(0.0, f32::min(2047.0, (self.fConst9 / fTemp42)));
-			let mut iTemp58: i32 = (fTemp57 as i32);
-			let mut fTemp59: f32 = f32::floor(fTemp57);
-			let mut fTemp60: f32 = f32::max(0.0, f32::min(2047.0, (self.fConst13 / fTemp42)));
-			let mut iTemp61: i32 = (fTemp60 as i32);
-			let mut fTemp62: f32 = f32::floor(fTemp60);
-			self.fRec15[0] = ((0.333333343 * (fTemp17 * ((5.0 * fTemp56) + (self.fConst4 * (((fTemp46 - (self.fVec11[((self.IOTA - iTemp58) & 4095) as usize] * (fTemp59 + (1.0 - fTemp57)))) - ((fTemp57 - fTemp59) * self.fVec11[((self.IOTA - (iTemp58 + 1)) & 4095) as usize])) + ((fTemp46 - (self.fVec11[((self.IOTA - iTemp61) & 4095) as usize] * (fTemp62 + (1.0 - fTemp60)))) - ((fTemp60 - fTemp62) * self.fVec11[((self.IOTA - (iTemp61 + 1)) & 4095) as usize]))))))) - (self.fConst23 * ((self.fConst25 * self.fRec15[2]) + (self.fConst8 * self.fRec15[1]))));
-			self.fRec16[0] = ((5.0 * (fTemp17 * fTemp56)) - (self.fConst3 * ((self.fConst7 * self.fRec16[2]) + (self.fConst8 * self.fRec16[1]))));
+			let mut fTemp53: f32 = f32::max(0.0, f32::min(2047.0, (self.fConst9 / fTemp42)));
+			let mut iTemp54: i32 = (fTemp53 as i32);
+			let mut fTemp55: f32 = f32::floor(fTemp53);
+			let mut fTemp56: f32 = f32::max(0.0, f32::min(2047.0, (self.fConst13 / fTemp42)));
+			let mut iTemp57: i32 = (fTemp56 as i32);
+			let mut fTemp58: f32 = f32::floor(fTemp56);
+			let mut fTemp59: f32 = f32::max(0.0, f32::min(2047.0, (self.fConst25 / fTemp42)));
+			let mut iTemp60: i32 = (fTemp59 as i32);
+			let mut fTemp61: f32 = f32::floor(fTemp59);
+			let mut fTemp62: f32 = ((fTemp46 - (self.fVec11[((self.IOTA - iTemp60) & 4095) as usize] * (fTemp61 + (1.0 - fTemp59)))) - ((fTemp59 - fTemp61) * self.fVec11[((self.IOTA - (iTemp60 + 1)) & 4095) as usize]));
+			self.fRec15[0] = ((self.fConst24 * (fTemp17 * ((((fTemp46 - (self.fVec11[((self.IOTA - iTemp54) & 4095) as usize] * (fTemp55 + (1.0 - fTemp53)))) - ((fTemp53 - fTemp55) * self.fVec11[((self.IOTA - (iTemp54 + 1)) & 4095) as usize])) + ((fTemp46 - (self.fVec11[((self.IOTA - iTemp57) & 4095) as usize] * (fTemp58 + (1.0 - fTemp56)))) - ((fTemp56 - fTemp58) * self.fVec11[((self.IOTA - (iTemp57 + 1)) & 4095) as usize]))) + fTemp62))) - (self.fConst23 * ((self.fConst26 * self.fRec15[2]) + (self.fConst8 * self.fRec15[1]))));
+			self.fRec16[0] = ((self.fConst4 * (fTemp17 * fTemp62)) - (self.fConst3 * ((self.fConst7 * self.fRec16[2]) + (self.fConst8 * self.fRec16[1]))));
 			self.fVec12[0] = fSlow25;
 			let mut fTemp63: f32 = ((self.fConst5 * self.fVec12[1]) + self.fRec19[1]);
 			self.fRec19[0] = (fTemp63 - f32::floor(fTemp63));
@@ -875,8 +901,8 @@ impl mydsp {
 			let mut fTemp93: f32 = f32::max(0.0, f32::min(2047.0, (self.fConst17 / fTemp65)));
 			let mut iTemp94: i32 = (fTemp93 as i32);
 			let mut fTemp95: f32 = f32::floor(fTemp93);
-			self.fRec22[0] = ((self.fConst13 * (fTemp17 * ((((((fTemp69 - (self.fVec15[((self.IOTA - iTemp82) & 4095) as usize] * (fTemp83 + (1.0 - fTemp81)))) - ((fTemp81 - fTemp83) * self.fVec15[((self.IOTA - (iTemp82 + 1)) & 4095) as usize])) + ((fTemp69 - (self.fVec15[((self.IOTA - iTemp85) & 4095) as usize] * (fTemp86 + (1.0 - fTemp84)))) - ((fTemp84 - fTemp86) * self.fVec15[((self.IOTA - (iTemp85 + 1)) & 4095) as usize]))) + ((fTemp69 - (self.fVec15[((self.IOTA - iTemp88) & 4095) as usize] * (fTemp89 + (1.0 - fTemp87)))) - ((fTemp87 - fTemp89) * self.fVec15[((self.IOTA - (iTemp88 + 1)) & 4095) as usize]))) + ((fTemp69 - (self.fVec15[((self.IOTA - iTemp91) & 4095) as usize] * (fTemp92 + (1.0 - fTemp90)))) - ((fTemp90 - fTemp92) * self.fVec15[((self.IOTA - (iTemp91 + 1)) & 4095) as usize]))) + ((fTemp69 - (self.fVec15[((self.IOTA - iTemp94) & 4095) as usize] * (fTemp95 + (1.0 - fTemp93)))) - ((fTemp93 - fTemp95) * self.fVec15[((self.IOTA - (iTemp94 + 1)) & 4095) as usize]))))) - (self.fConst26 * ((self.fConst27 * self.fRec22[2]) + (self.fConst19 * self.fRec22[1]))));
-			*output0 = (if (iSlow1 as i32 != 0) { if (iSlow22 as i32 != 0) { if (iSlow26 as i32 != 0) { (self.fConst26 * (self.fRec0[0] * (self.fRec22[2] + (self.fRec22[0] + (2.0 * self.fRec22[1]))))) } else { (self.fConst3 * (self.fRec0[0] * (self.fRec20[2] + (self.fRec20[0] + (2.0 * self.fRec20[1]))))) } } else { if (iSlow23 as i32 != 0) { (self.fConst3 * (self.fRec0[0] * (self.fRec17[2] + (self.fRec17[0] + (2.0 * self.fRec17[1]))))) } else { if (iSlow24 as i32 != 0) { (self.fConst3 * (self.fRec0[0] * (self.fRec16[2] + (self.fRec16[0] + (2.0 * self.fRec16[1]))))) } else { (self.fConst23 * (self.fRec0[0] * (self.fRec15[2] + (self.fRec15[0] + (2.0 * self.fRec15[1]))))) } } } } else { if (iSlow2 as i32 != 0) { if (iSlow20 as i32 != 0) { (self.fConst20 * (self.fRec0[0] * (self.fRec13[2] + (self.fRec13[0] + (2.0 * self.fRec13[1]))))) } else { (self.fConst3 * (self.fRec0[0] * (self.fRec12[2] + (self.fRec12[0] + (2.0 * self.fRec12[1]))))) } } else { if (iSlow3 as i32 != 0) { (self.fConst12 * (self.fRec0[0] * (self.fRec11[2] + (self.fRec11[0] + (2.0 * self.fRec11[1]))))) } else { if (iSlow4 as i32 != 0) { (self.fConst3 * (self.fRec0[0] * (self.fRec9[2] + (self.fRec9[0] + (2.0 * self.fRec9[1]))))) } else { (self.fConst3 * (self.fRec0[0] * (self.fRec1[2] + (self.fRec1[0] + (2.0 * self.fRec1[1]))))) } } } } as f32);
+			self.fRec22[0] = ((self.fConst13 * (fTemp17 * ((((((fTemp69 - (self.fVec15[((self.IOTA - iTemp82) & 4095) as usize] * (fTemp83 + (1.0 - fTemp81)))) - ((fTemp81 - fTemp83) * self.fVec15[((self.IOTA - (iTemp82 + 1)) & 4095) as usize])) + ((fTemp69 - (self.fVec15[((self.IOTA - iTemp85) & 4095) as usize] * (fTemp86 + (1.0 - fTemp84)))) - ((fTemp84 - fTemp86) * self.fVec15[((self.IOTA - (iTemp85 + 1)) & 4095) as usize]))) + ((fTemp69 - (self.fVec15[((self.IOTA - iTemp88) & 4095) as usize] * (fTemp89 + (1.0 - fTemp87)))) - ((fTemp87 - fTemp89) * self.fVec15[((self.IOTA - (iTemp88 + 1)) & 4095) as usize]))) + ((fTemp69 - (self.fVec15[((self.IOTA - iTemp91) & 4095) as usize] * (fTemp92 + (1.0 - fTemp90)))) - ((fTemp90 - fTemp92) * self.fVec15[((self.IOTA - (iTemp91 + 1)) & 4095) as usize]))) + ((fTemp69 - (self.fVec15[((self.IOTA - iTemp94) & 4095) as usize] * (fTemp95 + (1.0 - fTemp93)))) - ((fTemp93 - fTemp95) * self.fVec15[((self.IOTA - (iTemp94 + 1)) & 4095) as usize]))))) - (self.fConst27 * ((self.fConst28 * self.fRec22[2]) + (self.fConst19 * self.fRec22[1]))));
+			*output0 = (if (iSlow1 as i32 != 0) { if (iSlow22 as i32 != 0) { if (iSlow26 as i32 != 0) { (self.fConst27 * (self.fRec0[0] * (self.fRec22[2] + (self.fRec22[0] + (2.0 * self.fRec22[1]))))) } else { (self.fConst3 * (self.fRec0[0] * (self.fRec20[2] + (self.fRec20[0] + (2.0 * self.fRec20[1]))))) } } else { if (iSlow23 as i32 != 0) { (self.fConst3 * (self.fRec0[0] * (self.fRec17[2] + (self.fRec17[0] + (2.0 * self.fRec17[1]))))) } else { if (iSlow24 as i32 != 0) { (self.fConst3 * (self.fRec0[0] * (self.fRec16[2] + (self.fRec16[0] + (2.0 * self.fRec16[1]))))) } else { (self.fConst23 * (self.fRec0[0] * (self.fRec15[2] + (self.fRec15[0] + (2.0 * self.fRec15[1]))))) } } } } else { if (iSlow2 as i32 != 0) { if (iSlow20 as i32 != 0) { (self.fConst20 * (self.fRec0[0] * (self.fRec13[2] + (self.fRec13[0] + (2.0 * self.fRec13[1]))))) } else { (self.fConst3 * (self.fRec0[0] * (self.fRec12[2] + (self.fRec12[0] + (2.0 * self.fRec12[1]))))) } } else { if (iSlow3 as i32 != 0) { (self.fConst12 * (self.fRec0[0] * (self.fRec11[2] + (self.fRec11[0] + (2.0 * self.fRec11[1]))))) } else { if (iSlow4 as i32 != 0) { (self.fConst3 * (self.fRec0[0] * (self.fRec9[2] + (self.fRec9[0] + (2.0 * self.fRec9[1]))))) } else { (self.fConst3 * (self.fRec0[0] * (self.fRec1[2] + (self.fRec1[0] + (2.0 * self.fRec1[1]))))) } } } } as f32);
 			self.iVec0[1] = self.iVec0[0];
 			self.fRec0[1] = self.fRec0[0];
 			self.fVec1[1] = self.fVec1[0];
