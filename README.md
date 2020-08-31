@@ -12,10 +12,11 @@ Details about the project can be found on the [project's homepage](https://muses
 
 This repo contains a number of AA module examples. 
 
-* Default is a do nothing module that can be loaded, well to do nothing
-* Nuke is an analogue synth based on one of the Muses instruments
-* VL1 is a fairly close emulation of the [Casio VL-1](https://en.wikipedia.org/wiki/Casio_VL-1).
-* Gain is a simple gain controller
+* [Default](https://github.com/bgaster/aa_examples/tree/master/default) is a do nothing module that can be loaded, well to do nothing
+* [Nuke](https://github.com/bgaster/aa_examples/tree/master/nuke) is an analogue synth based on one of the Muses instruments
+* [VL1](https://github.com/bgaster/aa_examples/tree/master/vl1) is a fairly close emulation of the [Casio VL-1](https://en.wikipedia.org/wiki/Casio_VL-1). (Audio Anywhere standalone version pictured above.)
+* [Gain](https://github.com/bgaster/aa_examples/tree/master/gain) is a simple gain controller
+* [Reflect](https://github.com/bgaster/aa_examples/tree/master/reflect) is a spring reverb emulation
 * More in development
 
 ## Building
