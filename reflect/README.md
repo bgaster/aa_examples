@@ -1,6 +1,6 @@
 ## Reflect
 
-<img src="../images/reflect-screenshot.png" style="width:220px;">
+<img src="../images/reflect_screen_shot.png" style="width:220px;">
 
 A reverb effect. Originally based on a similar reverb from the amazing open source digital hardware synth, groovebox and FX processor [OTTO](https://github.com/OTTO-project/OTTO).
 
