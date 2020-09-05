@@ -1,5 +1,5 @@
 {
-	"wasm_url": "/gain/gain.wasm",
+	"wasm_url": ["/gain/gain.wasm"],
 	"gui": { 
 		"url": "/gain/gain.html",
 		"name": "Gain WASM",

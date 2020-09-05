@@ -1,5 +1,5 @@
 {
-	"wasm_url": "/nuke/nuke.wasm",
+	"wasm_url": ["/nuke/nuke.wasm"],
 	"gui": { 
 		"url": "/nuke/nuke.html",
 		"name": "Nuke",

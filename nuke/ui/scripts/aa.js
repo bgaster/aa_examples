@@ -31,27 +31,27 @@ function OnParamChange(param, value) {
 
 function controlChange(ctrlTag, value) {
     if (ctrlTag == controlFilter && client) {
-        sendMsg(1, 0, client.renderer.controlFilter(value))
+        sendMsg(1, 0, 0, client.renderer.controlFilter(value))
     }
     else if (ctrlTag == controlWave && client) {
-        sendMsg(1, 3, client.renderer.controlWave(value))
+        sendMsg(1, 0, 3, client.renderer.controlWave(value))
     }
     else if (ctrlTag == controlRelation && client) {
-        sendMsg(1, 1, client.renderer.controlRelation(value))
+        sendMsg(1, 0, 1, client.renderer.controlRelation(value))
     }
     else if (ctrlTag == controlSub && client) {
-        sendMsg(1, 2, client.renderer.controlSub(value))
+        sendMsg(1, 0, 2, client.renderer.controlSub(value))
     }
     else if (ctrlTag == controlAttack && client) {
-        sendMsg(1, 4, client.adsr.controlAttack(value))
+        sendMsg(1, 0, 4, client.adsr.controlAttack(value))
     }
     else if (ctrlTag == controlDecay && client) {
-        sendMsg(1, 5, client.adsr.controlDecay(value))
+        sendMsg(1, 0, 5, client.adsr.controlDecay(value))
     }
     else if (ctrlTag == controlSubstain && client) {
-        sendMsg(1, 7, client.adsr.controlSubstain(value))
+        sendMsg(1, 0, 7, client.adsr.controlSubstain(value))
     }
     else if (ctrlTag == controlRelease && client) {
-        sendMsg(1, 6, client.adsr.controlRelease(value))
+        sendMsg(1, 0, 6, client.adsr.controlRelease(value))
     }
 }

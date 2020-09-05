@@ -27,18 +27,18 @@ function OnParamChange(param, value) {
 
 function controlChange(ctrlTag, value) {
     if (ctrlTag == controlShape && client) {
-        sendMsg(1, 3, client.renderer.controlShape(value))
+        sendMsg(1, 0, 3, client.renderer.controlShape(value))
     }
     else if (ctrlTag == controlSpread && client) {
-        sendMsg(1, 5, client.renderer.controlSpread(value))
+        sendMsg(1, 0, 5, client.renderer.controlSpread(value))
     }
     else if (ctrlTag == controlLength && client) {
-        sendMsg(1, 1, client.renderer.controlLength(value))
+        sendMsg(1, 0, 1, client.renderer.controlLength(value))
     }
     else if (ctrlTag == controlShimmer && client) {
-        sendMsg(1, 4, client.renderer.controlShimmer(value))
+        sendMsg(1, 0, 4, client.renderer.controlShimmer(value))
     }
     else if (ctrlTag == controlDryWet && client) {
-        sendMsg(1, 0, client.renderer.controlDryWet(value))
+        sendMsg(1, 0, 0, client.renderer.controlDryWet(value))
     }
 }

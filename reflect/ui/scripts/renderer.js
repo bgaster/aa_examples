@@ -6,9 +6,9 @@
 function Renderer (client) {
     this.el = document.createElement('canvas')
     this.el.id = 'guide'
-    this.el.width = 640
+    this.el.width = 380
     this.el.height = 320
-    this.el.style.width = '640px'
+    this.el.style.width = '380px'
     this.el.style.height = '320px'
     this.context = this.el.getContext('2d')
     this.showExtras = true
