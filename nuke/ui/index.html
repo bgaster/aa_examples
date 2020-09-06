@@ -23,7 +23,7 @@ const controlAttack = 5
 const controlDecay = 6
 const controlSubstain = 7
 const controlRelease = 8
-function OnParamChange(param, value) {
+function OnParamChange(node, param, value) {
     if (param == paramFilter) {
         client.renderer.updateFilter(value)
     }
@@ -769,7 +769,7 @@ function Vector(x, y) {
     });
 };
       console.log = console.error = (str) => {
-        sendMsg(console_msg, 0, str);
+        sendMsg(console_msg, 0, 0, str);
       }
       const client = new Client()
       client.install(document.body)

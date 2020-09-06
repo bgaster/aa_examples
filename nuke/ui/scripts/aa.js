@@ -14,7 +14,7 @@ const controlDecay = 6
 const controlSubstain = 7
 const controlRelease = 8
 
-function OnParamChange(param, value) {
+function OnParamChange(node, param, value) {
     if (param == paramFilter) {
         client.renderer.updateFilter(value)
     }

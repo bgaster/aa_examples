@@ -20,7 +20,7 @@ const controlSpread = 2
 const controlLength = 3
 const controlShimmer = 4
 const controlDryWet = 5
-function OnParamChange(param, value) {
+function OnParamChange(node, param, value) {
     if (param == paramShape) {
         client.renderer.updateShape(value)
     }
@@ -512,7 +512,7 @@ function Vector(x, y) {
     });
 };
       console.log = console.error = (str) => {
-        sendMsg(console_msg, 0, str);
+        sendMsg(console_msg, 0, 0, str);
       }
       const client = new Client()
       client.install(document.body)

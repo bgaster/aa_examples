@@ -10,7 +10,7 @@ const controlLength = 3
 const controlShimmer = 4
 const controlDryWet = 5
 
-function OnParamChange(param, value) {
+function OnParamChange(node, param, value) {
     if (param == paramShape) {
         client.renderer.updateShape(value)
     }

@@ -3,7 +3,7 @@
 	"gui": { 
 		"url": "/gain/gain.html",
 		"name": "Gain WASM",
-		"params": [-50.0],
+		"params": [[-50.0]],
 		"width": 300,
 		"height": 300
 	},
