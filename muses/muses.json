@@ -1,0 +1,27 @@
+{
+	"wasm_url": ["/nuke/nuke.wasm", "/reflect/reflect.wasm"],
+	"gui": { 
+		"url": "/muses/muses.html",
+		"name": "Muses",
+		"params": [],
+		"width": 740,
+		"height": 640
+	},
+	"info": {
+		"name": "Muses",
+		"vendor": "cuberoo_",
+		"presets": 1,
+		"parameters": 0,
+		"inputs": 0,
+		"outputs": 2,
+		"midi_inputs": 1,
+		"midi_outputs": 0,
+		"id": 9614,
+		"version": 1,
+		"category": "Synth",
+		"initial_delay": 0,
+		"preset_chunks": false,
+		"f64_precision": false,
+		"silent_when_stopped": false
+	}
+}
