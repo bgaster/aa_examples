@@ -1,20 +1,20 @@
 {
-	"wasm_url": ["/gain/gain.wasm"],
+	"wasm_url": ["/vl1/vl1.wasm"],
 	"gui": { 
-		"url": "/gain/gain.html",
-		"name": "Gain WASM",
-		"params": [[-50.0]],
-		"width": 300,
-		"height": 300
+		"url": "/vl1/vl1.html",
+		"name": "VL-1",
+		"params": [],
+		"width": 1380,
+		"height": 400
 	},
 	"info": {
-		"name": "GAIN",
+		"name": "VL1",
 		"vendor": "cuberoo_",
 		"presets": 1,
 		"parameters": 0,
-		"inputs": 1,
+		"inputs": 0,
 		"outputs": 1,
-		"midi_inputs": 0,
+		"midi_inputs": 1,
 		"midi_outputs": 0,
 		"id": 9614,
 		"version": 1,

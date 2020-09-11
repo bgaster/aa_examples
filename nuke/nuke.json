@@ -1,9 +1,9 @@
 {
-	"wasm_url": "/nuke/nuke.wasm",
+	"wasm_url": ["/nuke/nuke.wasm"],
 	"gui": { 
 		"url": "/nuke/nuke.html",
 		"name": "Nuke",
-		"params": [0.5, 3.0, 1.0, 0.5],
+		"params": [[0.5, 3.0, 1.0, 0.5]],
 		"width": 640,
 		"height": 320
 	},

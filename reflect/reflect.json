@@ -1,10 +1,10 @@
 {
-	"wasm_url": "/reflect/reflect.wasm",
+	"wasm_url": ["/reflect/reflect.wasm"],
 	"gui": { 
 		"url": "/reflect/reflect.html",
 		"name": "Reflect WASM",
-		"params": [1.0, 0.0, 0.5, 0.0],
-		"width": 640,
+		"params": [[1.0, 0.0, 0.5, 0.0]],
+		"width": 380,
 		"height": 320
 	},
 	"info": {

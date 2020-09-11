@@ -62,7 +62,7 @@
         var meterControl = 0;
 
         // Audio Anywhere API functions
-        function paramChange(param, value) {
+        function OnParamChange(node, param, value) {
             if (param == gainParam) {
                 $('.gainKnob')
                     .val(value)
@@ -91,7 +91,7 @@
         $(function() {
             $(".gainKnob").knob({
                     'change' : function (v) { 
-                        sendMsg(sendParam, 0, v);
+                        sendMsg(sendParam, 0, 0, v);
                      }
                 }
             );

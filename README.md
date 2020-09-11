@@ -21,7 +21,8 @@ This repo contains a number of AA module examples.
 
 ## Building
 
-The example audio components are implmented in  [Rust](https://www.rust-lang.org/) and compiled to [WebAssembly](https://webassembly.org/).
+The example audio components are mostly implmented in  [Rust](https://www.rust-lang.org/) and compiled to [WebAssembly](https://webassembly.org/). (Although it is planed to implemented at
+least one using C/C++.)
 
 They currenlty make use of features only on nightly.
 
@@ -55,11 +56,38 @@ An AA module must consist of the following:
 
 # Deploying a set of Audio Anywhere Modules
 
-TODO
+It is possible to deploy AA modules in a number of different forms, but currently the 
+[standalone application](https://github.com/bgaster/aa_standalone) and VST 2.x plugin take basically the same approach. They assume that the modules are served via a websever, which
+for now requires that it is a single server, but this is not necessary. The root of the web-server contains the files in the directory **root** (it additionally contains some resources files):
+
+* **index.html** code for the single page app of the interface;          
+* **modules.json** description of example modules that can be loaded;
+* **js** Javascript files loaded by **index.html** and also by AA modules;
+* **css** CSS loaded by **index.html**.
+
+When a AA hosting application runs its interface is populated with **index.html**,
+and the set of modules is added to its module menu, which can be selected and loaded 
+by the user. Additionally, a default module is loaded, as specified in **modules.json**.
+
+Each module is assumed to have its own directory under the server root and contains the 
+module bundle, as defined above.
+
+A release can be built of existing AA modules and the AA hosting pages with the command:
+
+```bash
+./scripts/package.sh
+```
+
+This will create a directory, **pkg**, containing all the root files, plus bundles for each module in corresponding directories.
 
 # Adding a Module
 
 TODO
+
+Once an example is implemented the following steps must be completed to ensure that is added correctly to a release:
+
+* Add the module to **modules.json** so that a hosting application knows about the module;
+* Add comamnds to copy the module bundle to **package.sh** so it is added when building a release.
 
 # License
 © 2020 [Benedict R. Gaster (cuberoo_)](https://bgaster.github.io/)

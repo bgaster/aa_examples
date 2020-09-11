@@ -1,0 +1,345 @@
+<!doctype html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title></title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <meta http-equiv="expires" content="0">
+
+    <link href='https://fonts.googleapis.com/css?family=Orbitron' rel='stylesheet'>
+
+    <style type="text/css">
+        div {
+            -webkit-user-select: none; /* Safari */
+            -ms-user-select: none; /* IE 10+ and Edge */
+            user-select: none; /* Standard syntax */
+        }
+
+        .footer {
+            bottom: 0;
+            background: #000000;
+            color: #f1f1f1;
+            
+            position: fixed;
+            padding:0;
+            width: 100%;
+            height: 100px;
+        }
+
+        .header {
+            top: 0;
+            left: 40;
+            background: #555;
+            color: #f1f1f1;
+            display: flex;
+            align-items: flex-start;
+            justify-content: flex-start;
+            align-content: flex-start;
+        }
+          
+        .headeritem {
+            flex-grow: 1;
+            align-self: auto;
+        }
+
+          /* Page content */
+          .content {
+            padding: 40px;
+          }
+          
+          /* The sticky class is added to the header with JS when it reaches its scroll position */
+          .sticky {
+            position: fixed;
+            top: 0;
+            padding:0;
+            width: 100%
+          }
+          
+          /* Add some top padding to the page content to prevent sudden quick movement (as the header gets a 
+             new position at the top of the page (position:fixed and top:0) */
+          .sticky + .content {
+            padding-top: 102px;
+          }
+
+          .logo {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            background: var(--accent);
+            color: rgba(255, 0, 0, 0.0);
+            padding: 5px 10px;
+            background: url("./muses_text_logo.svg") no-repeat;
+            background-position: center;
+          }
+
+          .aalogo {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            background: var(--accent);
+            color: rgba(255, 0, 0, 0.0);
+            padding: 5px 10px;
+            background: url("./aa_logo.svg") no-repeat;
+            background-position: center;
+          }
+
+        body {
+            font-family: Orbitron;
+            text-align: center;
+            background-color: black;
+            margin: 0;
+            padding: 0;
+        }
+
+        .audioanywhere {
+            position: relative;
+            padding-bottom: 56.25%; /* 16:9 */
+	        padding-top: 25px;
+        }
+
+        
+    </style>
+    <link rel="stylesheet" type="text/css" href="./css/semantic.min.css">
+    <script type="text/javascript" src="./js/jquery.min.js"></script>
+    <script type="text/javascript" src = "./js/support.js"></script>
+    <script type="text/javascript" src = "./js/semantic.min.js"></script>
+
+    <style>
+        body {
+            font-family: Orbitron;
+            text-align: center;
+            background-color: black;
+            margin: 0;
+            padding: 0;
+        }
+
+        .ui.menu.item {
+            color: fade(#eb6510, 80%);
+            background: black !important;
+        }
+    </style>
+    
+</head>
+    <body>
+        <div class="content">
+            <div class="audioanywhere">
+                <div id="module"></div>
+            </div>
+        </div>
+
+        <div class="header sticky" id="aaHeader">
+            <div class="ui dropdown selection headeritem" id="modules">
+                Modules
+                <i class="dropdown icon"></i>
+                <div class="menu" name="modulesMenu">
+                </div>
+            </div>
+        
+            <div class="ui dropdown selection headeritem" id="inputDevices" >
+                Input Devices
+                <i class="dropdown icon"></i>
+                <div class="menu" name="inputDevicesMenu">
+                </div>
+            </div>
+        
+            <div class="ui dropdown selection headeritem" id="outputDevices">
+                Output Devices
+                <i class="dropdown icon"></i>
+                <div class="menu">
+                </div>
+            </div>
+        </div>
+
+        <div class="footer" id="aaFooter">
+            <div style="float:left;">
+                <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+                    width="90" height="90" viewBox="0 0 238 220.4" style="enable-background:new 0 0 238 220.4;" xml:space="preserve">
+                    <style type="text/css">
+                        .st6{fill:none;stroke:#F3B83C;stroke-width:16;stroke-linecap:round;}
+                        .st7{fill:none;stroke:#F3B83C;stroke-width:12;stroke-linecap:round;}
+                    </style>
+                    <g>
+                        <path class="st6" d="M27,10.7v200 M27,10.7l100,200 M27,10.7l200,200 M27,10.7c82.8,0,150,22.4,150,50 M177,60.7
+                            c27.6,0,50,67.2,50,150l0,0 M97,140.7l30-30 M97,140.7c-20,26.7-43.3,36.7-70,30"/>
+                        <path class="st7" d="M177,60.7l20-20"/>
+                        <path class="st7" d="M-243-279.3"/>
+                    </g>
+                </svg>
+            </div>
+            <div style="float:right;">
+                <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+                    viewBox="0 0 126 117" height="100px" style="enable-background:new 0 0 126 117;" xml:space="preserve">
+                    <style type="text/css">
+                        .st0{fill:none;stroke:#DD4A22;stroke-width:2.7801;stroke-linecap:round;stroke-miterlimit:10;}
+                        .st1{fill:none;stroke:#F3B83C;stroke-width:2.7801;stroke-linecap:round;stroke-miterlimit:10;}
+                        .st2{fill:none;stroke:#6060A6;stroke-width:2.7801;stroke-linecap:round;stroke-miterlimit:10;}
+                        .st3{fill:none;stroke:#DD4A22;stroke-width:2.78;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;}
+                        .st4{fill:none;stroke:#F3B83C;stroke-width:2.78;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;}
+                        .st5{fill:none;stroke:#6060A6;stroke-width:2.78;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;}
+                    </style>
+                    <g>
+                        <path class="st3" d="M59.72,15.54c-26.92,28.43,26.3,57.44-0.62,85.87h7.53c26.92-28.43-26.3-57.44,0.62-85.87"/>
+                        <path class="st4" d="M74.79,15.54c-26.92,28.43,26.3,57.44-0.62,85.87"/>
+                        <path class="st3" d="M89.86,15.54h-7.53c-26.92,28.43,26.3,57.44-0.62,85.87h9.53"/>
+                        <path class="st5" d="M97.39,15.54c-26.92,28.43,26.3,57.44-0.62,85.87"/>
+                        <path class="st5" d="M28.61,101.41c26.92-28.43-26.3-57.44,0.62-85.87h7.71c-26.92,28.43,26.3,57.44-0.62,85.87h7.71
+                            c26.92-28.43-26.3-57.44,0.62-85.87l7.71,0.06c-26.92,28.43,26.3,57.44-0.62,85.87"/>
+                        <line class="st3" x1="82.01" y1="58.47" x2="86.99" y2="58.47"/>
+                    </g>
+                </svg>
+            </div>
+        </div>
+        
+        <script>
+            var change_module = 2;
+            var change_input_device = 3;
+            var change_output_device = 4;
+            var loaded = 5;
+
+            function genIFrame(url, width, height) {
+                console.log("url " + url);
+                let h = "<iframe id=\"moduleIframe\" name=\"moduleIframe\" onload=\"iframeLoaded()\" src=\"" + url + "\" style=\"height: " + height + "px; width: " + width + "px; border: none;\"><iframe>";
+                return h;
+            }
+
+            var moduleWindow = undefined;
+
+            function getIframeWindow(iframe_object) {
+                var doc;
+              
+                if (iframe_object.contentWindow) {
+                  return iframe_object.contentWindow;
+                }
+              
+                if (iframe_object.window) {
+                  return iframe_object.window;
+                } 
+              
+                if (!doc && iframe_object.contentDocument) {
+                  doc = iframe_object.contentDocument;
+                } 
+              
+                if (!doc && iframe_object.document) {
+                  doc = iframe_object.document;
+                }
+              
+                if (doc && doc.defaultView) {
+                 return doc.defaultView;
+                }
+              
+                if (doc && doc.parentWindow) {
+                  return doc.parentWindow;
+                }
+              
+                return undefined;
+            }
+
+            // called when module loaded
+            function iframeLoaded() {
+                // enable module to be able to receive messages
+                var id = document.getElementById("moduleIframe")
+                moduleWindow = getIframeWindow(id)
+
+                // send loaded message to host
+                sendMsg(loaded, 0, 0);
+            }
+            
+            function OnModuleChange(url, width, height) {
+                // make module window temporarly undefined to avoid any 
+                // race conditions
+                moduleWindow = undefined;
+                var contentDiv = document.getElementById("module");
+                // generate and insert iframe
+                var fragmentId = location.hash.substr(1);
+                contentDiv.innerHTML = genIFrame(url, width, height);  
+            }
+
+            // AA API
+
+            // param change message, call loaded module variant
+            function OnParamChange(node, param, value) {
+                if (moduleWindow) {
+                    moduleWindow.OnParamChange(node, param, value)
+                }
+            }
+    
+
+            // control change message, call loaded module variant
+            function OnControlChange(ctrlTag, value) {
+                if (moduleWindow) {
+                    if (moduleWindow.controlChange) {
+                        moduleWindow.controlChange(ctrlTag, value)
+                    }
+                }
+            }
+
+            function OnAddOutputDevice(id, name) {
+                $('#outputDevices > .menu').append("<a class=\"item\" data-value=" + id + ">" + name + "</a>");
+            }
+
+            function OnAddInputDevice(id, name) {
+                $('#inputDevices > .menu').append("<a class=\"item\" data-value=" + id + ">" + name + "</a>");
+            }
+
+            function OnAddModule(name, json_url) {
+                $('#modules > .menu').append("<a class=\"item\" data-value=\"" + json_url + "\">" + name + "</a>");
+            }
+            
+            window.onload = function() {
+                console.log = console.error = (str) => {
+                    sendMsg(console_msg, 0, 0, str);
+                }
+                // install default module...
+                //OnModuleChange("http://127.0.0.1:8000/$gui_page$", $width$, $height$);
+
+                //$('.ui.dropdown').dropdown({
+                $('#modules').dropdown({
+                    onChange: (value, text, $selectedItem) => {
+                        sendMsg(change_module, 0, 0, value);
+                    },
+                    on: "hover"
+                });
+
+                $('#inputDevices').dropdown({
+                    onChange: (value, text, $selectedItem) => {
+                        sendMsg(change_input_device, 0, 0, parseInt(value, 10));
+                        //console.log(value);
+                    },
+                    on: "hover"
+                });
+
+                $('#outputDevices').dropdown({
+                    onChange: (value, text, $selectedItem) => {
+                        sendMsg(change_output_device, 0, 0, parseInt(value, 10)); 
+                        //console.log(value);
+                    },
+                    on: "hover"
+                });
+
+                // inform the app that we are now loaded
+                sendMsg(loaded, 0, 0);
+            }
+
+            window.onscroll = function() {
+                handleSticky()
+            };
+    
+            // Get the header
+            var header = document.getElementById("aaHeader");
+    
+            // Get the offset position of the navbar
+            var sticky = header.offsetTop;
+    
+            // Add the sticky class to the header when you reach its scroll position. 
+            // Remove "sticky" when you leave the scroll position
+            function handleSticky() {
+                if (window.pageYOffset > sticky) {
+                    header.classList.add("sticky");
+                } else {
+                    header.classList.remove("sticky");
+                }
+            } 
+        </script>
+    </body>
+</html>

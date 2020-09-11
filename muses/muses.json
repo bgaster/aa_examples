@@ -1,20 +1,20 @@
 {
-	"wasm_url": ["/gain/gain.wasm"],
+	"wasm_url": ["/nuke/nuke.wasm", "/reflect/reflect.wasm"],
 	"gui": { 
-		"url": "/gain/gain.html",
-		"name": "Gain WASM",
-		"params": [[-50.0]],
-		"width": 300,
-		"height": 300
+		"url": "/muses/muses.html",
+		"name": "Muses",
+		"params": [],
+		"width": 740,
+		"height": 640
 	},
 	"info": {
-		"name": "GAIN",
+		"name": "Muses",
 		"vendor": "cuberoo_",
 		"presets": 1,
 		"parameters": 0,
-		"inputs": 1,
-		"outputs": 1,
-		"midi_inputs": 0,
+		"inputs": 0,
+		"outputs": 2,
+		"midi_inputs": 1,
 		"midi_outputs": 0,
 		"id": 9614,
 		"version": 1,

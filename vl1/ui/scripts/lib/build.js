@@ -40,7 +40,7 @@ fs.writeFileSync('index.html', cleanup(`
       client.install(document.body)
       window.addEventListener('load', () => { 
         console.log = console.error = (str) => {
-          sendMsg(console_msg, 0, str);
+          sendMsg(console_msg, 0, 0, str);
         }
         client.start()
       })

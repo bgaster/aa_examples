@@ -1,104 +1,9 @@
-<!DOCTYPE html>
-<html lang="en">
-<html>
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ui</title>
-    <script src = "../js/support.js"></script>
-    <script>
-    </script>
-  </head>
-  <body>
-    <script>
-const paramShape = 0
-const paramSpread = 1
-const paramLength = 2
-const paramShimmer = 3
-const controlShape = 1
-const controlSpread = 2
-const controlLength = 3
-const controlShimmer = 4
-const controlDryWet = 5
-function OnParamChange(node, param, value) {
-    if (param == paramShape) {
-        client.renderer.updateShape(value)
-    }
-    else if (param == paramSpread) {
-        client.renderer.updateSpread(value)
-    }
-    else if (param == paramRelation) {
-        client.renderer.updateLength(value)
-    }
-    else if (param == paramShimmer) {
-        client.renderer.updateShimmer(value)
-    }
-}
-function controlChange(ctrlTag, value) {
-    if (ctrlTag == controlShape && client) {
-        sendMsg(1, 0, 3, client.renderer.controlShape(value))
-    }
-    else if (ctrlTag == controlSpread && client) {
-        sendMsg(1, 0, 5, client.renderer.controlSpread(value))
-    }
-    else if (ctrlTag == controlLength && client) {
-        sendMsg(1, 0, 1, client.renderer.controlLength(value))
-    }
-    else if (ctrlTag == controlShimmer && client) {
-        sendMsg(1, 0, 4, client.renderer.controlShimmer(value))
-    }
-    else if (ctrlTag == controlDryWet && client) {
-        sendMsg(1, 0, 0, client.renderer.controlDryWet(value))
-    }
-}
-'use strict'
-function Client () {
-  this.install = function (host) {
-    console.info('Client', 'Installing..')
-    this.renderer = new Renderer(this)
-    host.appendChild(this.renderer.el);
-    document.addEventListener('keypress', (e) => { this.handleKeyPress(e) }, false );
-  }
-  this.start = () => {
-    console.log('Client', 'Starting..')
-    this.renderer.start()
-    setInterval(() => { this.renderer.update() }, 33) // redraw at 30hz
-    setTimeout(() => { document.body.className += ' ready' }, 250)
-  }
-  this.update = () => {
-    console.log('Client', 'Update...')
-    this.renderer.update()
-  }
-  this.clear = () => {
-  }
-  this.reset = () => {
-  }
-  this.whenOpen = (file, data) => {
-  }
-  this.getPadding = () => {
-    return { x: 60, y: 90 }
-  }
-  this.getWindowSize = () => {
-    return { width: window.innerWidth, height: window.innerHeight }
-  }
-  this.getProjectSize = () => {
-    return this.tool.settings.size
-  }
-  this.getPaddedSize = () => {
-    const rect = this.getWindowSize()
-    const pad = this.getPadding()
-    return { width: step(rect.width - pad.x, 15), height: step(rect.height - pad.y, 15) }
-  }
-  this.handleKeyPress = (e) => { 
-  }
-  function sizeOffset (a, b) { return { width: a.width - b.width, height: a.height - b.height } }
-  function step (v, s) { return Math.round(v / s) * s }
-}
 /*
  * 
  */
 'use strict'
-function Renderer (client) {
+
+function ReflectRenderer (client) {
     this.el = document.createElement('canvas')
     this.el.id = 'guide'
     this.el.width = 380
@@ -107,84 +12,122 @@ function Renderer (client) {
     this.el.style.height = '320px'
     this.context = this.el.getContext('2d')
     this.showExtras = true
+
     this.scale = 1 //window.devicePixelRatio
+
+    // params
     this.shape_ = 1.0
     this.spread_ = 0.0
     this.length_ = 0.5
     this.shimmer_ = 0.1
     this.dryWet_ = 0.5
+
     this.controlShape = (v) => {
         let mv = map(v, 0, 127, 0.0, 2.0)
         this.shape_ = mv
         return mv
     }
+
     this.controlSpread = (v) => {
         let mv = map(v, 0, 127, 0, 1.0)
         this.spread_ = mv
         return mv
     }
+    
     this.controlLength = (v) => {
         let mv = map(v, 0, 127, 0, 1.2)
         this.length_ = mv
         return mv 
     }
+    
     this.controlShimmer = (v) => {
         let mv = map(v, 0, 127, 0, 1.2)
         this.shimmer_ = mv
         return mv
     }
+
     this.controlDryWet = (v) => {
         let mv = map(v, 0, 127, 0, 1.0)
         this.dryWet_ = mv
         return mv
     }
+
+    // handle Midi Twister style endless encoders
     this.incShape = (v) => {
         this.shape_ = clamp(this.shape_ + 0.01 * v, 0, 2.0)
+        return this.shape_
     }
+
     this.incSpread = (v) => {
         this.spread_ = clamp(this.spread_ + 0.01 * v, 0, 1.0)
+        return this.spread_
     }
+
     this.incLength = (v) => {
-        this.length_ = clamp(this.relation + 0.01 * v, 0, 1.2)
+        this.length_ = clamp(this.length_ + 0.01 * v, 0, 1.2)
+        return this.length_
     }
+
     this.incShimmer = (v) => {
-        this.shimmer_ = clamp(this.filter + 0.01 * v, 0, 1.2)
+        this.shimmer_ = clamp(this.shimmer_ + 0.01 * v, 0, 1.2)
+        return this.shimmer_
     }
+
+    this.incDryWet = (v) => {
+        this.dryWet_ = clamp(this.dryWet_ + 0.01 * v, 0, 1.0)
+        return this.dryWet_
+    }
+
     this.updateShape = (v) => {
         this.shape_ = v
     }
+
     this.updateSpread = (v) => {
         this.spread_ = v
     }
+
     this.updateLength = (v) => {
         this.length_ = v
     }
+
     this.updateShimmer = (v) => {
         this.shimmer_ = v
     }
+
+    // constants
+
     const red = "#DD4A22"
     const yellow = "#F3B83C"
     const blue = "#6060A6"
     const rose = "#FFBDB0"
     const rootbeer = "#1f0c07"
     const white = "#FFFFFF"
+
+    // functions 
+
     this.start = function () {
         this.update()
+        //window.requestAnimationFrame(() => { this.update() });
     }
+
     this.update = function (force = false) {
-        this.resize()
+        //this.resize()
         this.draw()
+        //window.requestAnimationFrame(() => { this.update() });
     }
+
     this.draw = function() {
         this.clear()
         this.drawReverb()
     }
+
     this.clear = function () {
         this.context.clearRect(0, 0, this.el.width * this.scale, this.el.height * this.scale);
         this.context.rect(0, 0, this.el.width * this.scale, this.el.height * this.scale);
         this.context.fillStyle = rootbeer;
         this.context.fill();
     }
+
     this.resize = function () {
         const _target = client.getPaddedSize()
         const _current = { width: this.el.width / this.scale, height: this.el.height / this.scale }
@@ -198,14 +141,21 @@ function Renderer (client) {
         this.el.style.width = (_target.width) + 'px'
         this.el.style.height = (_target.height) + 'px'
     }
+    // ------------------
+
+    
     this.drawReverb = function() {
         var style = { color: "#d3d3d3", thickness: 6.0, strokeLinecap: "round", strokeLinejoin: "round"}
         this.setStyle(style)
+
+        // draw the stars
         let star_radius = 3.0
         let shimmer =  normalize(this.shimmer_, 0.0, 1.2)
+        //dim(yellow, 1.0 - shimmer)
         this.context.fillStyle = dim(yellow, 1.0 - shimmer)
         this.drawVertex(point(126.6, 75.2), star_radius)
         this.drawVertex(point(228.8, 162.3), star_radius)
+        
         this.drawVertex(point(186.8, 81.3), star_radius)
         this.drawVertex(point(259.0, 28.3), star_radius)
         this.drawVertex(point(207.6, 192.4), star_radius)
@@ -216,6 +166,8 @@ function Renderer (client) {
         this.drawVertex(point(294.1, 181.6), star_radius)
         this.drawVertex(point(52.7, 190.3), star_radius)
         this.drawVertex(point(106.6, 42.2), star_radius)
+
+        // next set
         second_star_radius = 2.0;
         this.drawVertex(point(255.3, 168.8), star_radius)
         this.drawVertex(point(149.5, 60.6), star_radius)
@@ -242,20 +194,30 @@ function Renderer (client) {
         this.drawVertex(point(159.0, 164.0), star_radius)
         this.drawVertex(point(154.0, 190.0), star_radius)
         this.drawVertex(point(182.0, 185.0), star_radius)
+
+        // blue dot
         this.context.fillStyle = blue
         this.drawVertex(point(241.1, 85.3), 6.0)
+
+        // blue line
         this.context.strokeStyle = blue
         this.context.beginPath()
         this.context.moveTo(144.3, 151.2)
         this.context.lineTo(241.1, 85.3)
         this.context.stroke()
+
         let length =  normalize(this.length_, 0.0, 1.0)
         let shape = normalize(this.shape_, 0.0, 2.0)
+
         let direction  = vector(3.0, -2.0).mul_scalar(length * 3.0 + 0.6)
+
         let minscale = 0.55;
         let backscale = Math.min(1.0, minscale + shape * (1.0 - minscale) * 2.0);
         let frontscale = Math.min(1.0, minscale + (1.0 - shape) * (1.0 - minscale) * 2.0);
+
         this.context.lineWidth = (style.thickness * this.scale) / backscale 
+
+        // draw back pad
         this.context.save()
         this.context.strokeStyle = white
         let d = direction.mul_scalar(5)
@@ -263,16 +225,19 @@ function Renderer (client) {
         this.context.translate(192.714, 118.458)
         this.context.scale(backscale, backscale)
         this.context.translate(-192.714, -118.458)
+
         this.context.beginPath()
         this.context.moveTo(159.0, 103.6)
         this.context.bezierCurveTo(159.0, 79.0, 172.3, 68.2, 192.7, 78.2)
         this.context.bezierCurveTo(213.1, 88.2, 226.4, 108.7, 226.4, 135.3)
         this.context.bezierCurveTo(226.4, 161.9, 213.9, 169.8, 192.7, 159.0)
+
         this.context.moveTo(226.4, 174.1)
         this.context.lineTo(226.4, 95.0)
         this.context.lineTo(159.0, 60.8)
         this.context.lineTo(159.0, 103.6)
         this.context.stroke()
+
         this.context.fillStyle = white
         this.context.beginPath()
         this.context.moveTo(226.4, 176.1)
@@ -286,6 +251,9 @@ function Renderer (client) {
         this.context.closePath()
         this.context.fill()
         this.context.restore()
+
+        // draw back outter ring
+        
         this.context.save()
         this.context.beginPath()
         this.context.strokeStyle = rose
@@ -294,6 +262,7 @@ function Renderer (client) {
         this.context.translate(192.714, 118.458)
         this.context.scale(backscale, backscale)
         this.context.translate(-192.714, -118.458)
+
         this.context.moveTo(170.3, 113.6)
         this.context.bezierCurveTo(170.1, 111.6, 169.9, 109.6, 169.9, 107.6)
         this.context.bezierCurveTo(169.9, 91.1, 178.9, 83.7, 192.7, 90.4)
@@ -302,6 +271,8 @@ function Renderer (client) {
         this.context.bezierCurveTo(191.2, 144.3, 189.7, 143.4, 188.3, 142.5)
         this.context.stroke()
         this.context.restore()
+
+        // single path for the rings and then simple transpose the resulting verts
         let ring = (s) => {
             this.context.save()
             this.context.strokeStyle = rose
@@ -315,10 +286,14 @@ function Renderer (client) {
             this.context.stroke()
             this.context.restore()
         }
+
+        // draw middle rings
         ring(-1.0)
         ring(1.0)
         ring(3.2)
+
         this.context.lineWidth = (style.thickness * this.scale) / frontscale 
+        // draw front ring
         this.context.save()
         this.context.beginPath()
         this.context.strokeStyle = rose
@@ -327,6 +302,7 @@ function Renderer (client) {
         this.context.translate(192.714, 118.458)
         this.context.scale(frontscale, frontscale)
         this.context.translate(-192.714, -118.458)
+
         this.context.moveTo(205.4, 124.2)
         this.context.bezierCurveTo(205.4, 134.2, 200.7, 137.2, 192.7, 133.1)
         this.context.bezierCurveTo(184.7, 129.1, 180.0, 121.4, 180.0, 112.2)
@@ -334,6 +310,7 @@ function Renderer (client) {
         this.context.bezierCurveTo(200.4, 106.5, 205.4, 114.2, 205.4, 124.2)
         this.context.stroke()
         this.context.restore()
+
         this.context.save()
         this.context.beginPath()
         this.context.strokeStyle = rose
@@ -349,6 +326,9 @@ function Renderer (client) {
         this.context.bezierCurveTo(206.5, 97.2, 215.5, 111.1, 215.5, 129.0)
         this.context.stroke()
         this.context.restore()
+
+
+        // draw front ring
         this.context.save()
         this.context.beginPath()
         this.context.strokeStyle = white
@@ -358,10 +338,12 @@ function Renderer (client) {
         this.context.translate(192.714, 118.458)
         this.context.scale(frontscale, frontscale)
         this.context.translate(-192.714, -118.458)
+
         this.context.moveTo(192.7, 158.6)
         this.context.lineTo(226.4, 175.7)
         this.context.lineTo(226.4, 134.9)
         this.context.stroke()
+
         this.context.beginPath()
         this.context.moveTo(192.7, 158.6)
         this.context.lineTo(226.4, 175.7)
@@ -369,6 +351,7 @@ function Renderer (client) {
         this.context.bezierCurveTo(226.4, 161.5, 213.9, 169.4, 192.7, 158.6)
         this.context.closePath()
         this.context.fill()
+
         this.context.beginPath()
         this.context.moveTo(159.0, 60.4)
         this.context.lineTo(159.0, 103.2)
@@ -376,6 +359,7 @@ function Renderer (client) {
         this.context.lineTo(226.4, 94.6)
         this.context.lineTo(159.0, 60.4)
         this.context.stroke()
+
         this.context.beginPath()
         this.context.moveTo(159.0, 60.4)
         this.context.lineTo(159.0, 103.2)
@@ -384,35 +368,44 @@ function Renderer (client) {
         this.context.lineTo(226.4, 94.6)
         this.context.lineTo(159.0, 60.4)
         this.context.fill()
+
         this.context.beginPath()
         this.context.moveTo(159.0, 103.2)
         this.context.lineTo(159.0, 141.6)
         this.context.lineTo(192.7, 158.6)
         this.context.stroke()
+
         this.context.beginPath()
         this.context.moveTo(192.7, 158.6)
         this.context.bezierCurveTo(171.5, 147.9, 159.0, 127.6, 159.0, 103.2)
         this.context.lineTo(159.0, 141.6)
         this.context.lineTo(192.7, 158.6)
         this.context.fill()
+
         this.context.restore()
+
+        // fix up line, otherwise it is drawn behind
         this.context.save()
         this.context.strokeStyle = blue
         let translation = vector(177.828 + 12.0, 128.387 - 8.0).plus(direction.mul_scalar(-4.4))
+        
         if (translation.x > 144.3) {
             this.context.beginPath()
             this.context.moveTo(144.3, 151.2)
             this.context.lineTo(translation.x, translation.y)
             this.context.stroke()
         }
+
         this.drawVertex(point(144.3, 151.2), 6.0) 
         this.context.restore()
+
         this.context.font = '16px serif'
         this.context.fillStyle = white
         this.context.fillText('spread', 14.0, 45.0)
         this.context.font = '26px serif'
         this.context.fillStyle = blue
         this.context.fillText(Math.round(this.spread_*100.0), 14.0, 80.0)
+
         this.context.font = '16px serif'
         this.context.fillStyle = white
         this.context.fillText('dry/wet', 14.0, 115.0)
@@ -420,28 +413,39 @@ function Renderer (client) {
         this.context.fillStyle = blue
         this.context.fillText(Math.round(this.dryWet_*100.0), 14.0, 150)
     }
+
+    
+// ------------------
+
+
     this.drawVertex = function (pos, radius = 5) {
         this.context.beginPath()
         this.context.arc((pos.x * this.scale), (pos.y * this.scale), radius, 0, 2 * Math.PI, false)
         this.context.fill()
         this.context.closePath()
     }
+
     this.setStyle = function(style) {
         this.context.strokeStyle = style.color
         this.context.lineWidth = style.thickness * this.scale
         this.context.lineCap = style.strokeLinecap
         this.context.lineJoin = style.strokeLinejoin
     }
+
     this.drawPath = function (path, style) {
         const p = new Path2D(path)
+
         this.context.strokeStyle = style.color
         this.context.lineWidth = style.thickness * this.scale
         this.context.lineCap = style.strokeLinecap
         this.context.lineJoin = style.strokeLinejoin
+
         if (style.fill && style.fill !== 'none') {
             this.context.fillStyle = style.color
             this.context.fill(p)
         }
+
+        // Dash
         this.context.save()
         if (style.strokeLineDash) { 
             this.context.setLineDash(style.strokeLineDash) 
@@ -452,6 +456,7 @@ function Renderer (client) {
         this.context.stroke(p)
         this.context.restore()
     }
+
     function printSize (size) { return `${size.width}x${size.height}` }
     function sizeOffset (a, b) { return { width: a.width - b.width, height: a.height - b.height } }
     function clamp (v, min, max) { return v < min ? min : v > max ? max : v }
@@ -464,8 +469,14 @@ function Renderer (client) {
     function rotate(p,a,orgin) {
         let s = Math.sin(a)
         let c = Math.cos(a)
+        
+        // translate to orgin
         p = p.minus(orgin)
+
+        // rotate around orgin
         p = point(p.x * c - p.y * s, p.x * s + p.y * c)
+
+        // translate back to orignal position
         return p.plus(orgin)
     }
     function radians(d) { return d * (Math.PI/180) }
@@ -487,40 +498,6 @@ function Renderer (client) {
         let dim = clamp(1.0 - amount, 0.0, 1.0)
         let c = hexToRgb(color)
         return "rgba(" + c.r + "," + c.g + "," + c.b + "," + dim + ")"
+        //return rgbToHex(c.r * dim, c.g * dim, c.b * dim)
     }
 }
-function Vector(x, y) {
-	var that = this;
-  	that.x = x;
-  	that.y = y;
-    that.plus = function (vector){
-    	return new Vector(that.x + vector.x, that.y + vector.y); 
-    }
-    that.minus = function (vector){
-      return new Vector(that.x - vector.x, that.y - vector.y);
-    }
-    that.mul = function(vector) {
-      return new Vector(that.x * vector.x, that.y * vector.y);
-    }
-    that.mul_scalar = function(scalar) {
-        return new Vector(that.x * scalar, that.y * scalar);
-    }
-    Object.defineProperty(that, 'length', {
-    	get: function (){
-          return Math.sqrt(Math.pow(that.y, 2) + Math.pow(that.x, 2));
-    	}
-    });
-};
-      console.log = console.error = (str) => {
-        sendMsg(console_msg, 0, 0, str);
-      }
-      const client = new Client()
-      client.install(document.body)
-      window.addEventListener('load', () => { 
-        client.start()
-      })
-    </script>
-    <style>
-    </style>
-  </body>
-</html>

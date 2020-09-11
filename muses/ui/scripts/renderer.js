@@ -1,414 +1,146 @@
-<!DOCTYPE html>
-<html lang="en">
-<html>
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ui</title>
-    <script src = "../js/support.js"></script>
-    <script>
-    </script>
-  </head>
-  <body>
-    <script>
-const paramFilter = 0
-const paramWave = 1
-const paramRelation = 2
-const paramSub = 3
-const controlFilter = 1
-const controlWave = 2
-const controlRelation = 3
-const controlSub = 4
-const controlAttack = 5
-const controlDecay = 6
-const controlSubstain = 7
-const controlRelease = 8
-function OnParamChange(node, param, value) {
-    if (param == paramFilter) {
-        client.renderer.updateFilter(value)
-    }
-    else if (param == paramWave) {
-        client.renderer.updateWave(value)
-    }
-    else if (param == paramRelation) {
-        client.renderer.updateRelation(value)
-    }
-    else if (param == paramSub) {
-        client.renderer.updateSub(value)
-    }
-}
-function controlChange(ctrlTag, value) {
-    if (ctrlTag == controlFilter && client) {
-        sendMsg(1, 0, 0, client.renderer.controlFilter(value))
-    }
-    else if (ctrlTag == controlWave && client) {
-        sendMsg(1, 0, 3, client.renderer.controlWave(value))
-    }
-    else if (ctrlTag == controlRelation && client) {
-        sendMsg(1, 0, 1, client.renderer.controlRelation(value))
-    }
-    else if (ctrlTag == controlSub && client) {
-        sendMsg(1, 0, 2, client.renderer.controlSub(value))
-    }
-    else if (ctrlTag == controlAttack && client) {
-        sendMsg(1, 0, 4, client.adsr.controlAttack(value))
-    }
-    else if (ctrlTag == controlDecay && client) {
-        sendMsg(1, 0, 5, client.adsr.controlDecay(value))
-    }
-    else if (ctrlTag == controlSubstain && client) {
-        sendMsg(1, 0, 7, client.adsr.controlSubstain(value))
-    }
-    else if (ctrlTag == controlRelease && client) {
-        sendMsg(1, 0, 6, client.adsr.controlRelease(value))
-    }
-}
 /*
  * 
  */
 'use strict'
-function ADSR (client) {
-    var attack = 2.001
-    var attackMin = 0.001
-    var attackMax = 4.0
-    var attackStep = 0.01
-    var decay = 1.0
-    var decayMin = 0.0
-    var decayMax = 4.0
-    var decayStep = 0.01
-    var substain = 0.75
-    var substainMin = 0.0
-    var substainMax = 1.0
-    var substainStep = 0.01
-    var release = 2.0
-    var releaseMin = 0.0
-    var releaseMax = 4.0
-    var releaseStep = 0.01
-    const red = "#DD4A22"
-    const yellow = "#F3B83C"
-    const blue = "#6060A6"
-    const rose = "#FFBDB0"
-    const rootbeer = "#1f0c07"
-    this.controlAttack = (v) => {
-        let mv = map(v, 0, 127, attackMin, attackMax)
-        attack = mv
-        return mv
-    }
-    this.controlDecay = (v) => {
-        let mv = map(v, 0, 127, decayMin, decayMax)
-        decay = mv
-        return mv
-    }
-    this.controlSubstain = (v) => {
-        let mv = map(v, 0, 127, substainMin, substainMax)
-        substain = mv
-        return mv 
-    }
-    this.controlRelease = (v) => {
-        let mv = map(v, 0, 127, releaseMin, releaseMax)
-        release = mv
-        return mv
-    }
-    this.start = function () {
-        console.log("ADSR")
-    }
-    this.draw = function(context, transpose) {
-        drawEnvelope(context, transpose)
-    }
-    drawEnvelope = function(context, transpose) {
-        let bX = 30.0
-        let bY = 60.0
-        let bWidth = 260.0
-        let bHeight = 110.0
-        let spacing = 10.0
-        let maxWidth = (bWidth - 3.0 * spacing) / 3.0
-        let aw = maxWidth * normalize(attack, attackMin, attackMax) 
-        let dw = maxWidth * normalize(decay, decayMin, decayMax)
-        let sh = bHeight * normalize(substain, substainMin, substainMax)
-        let rw = maxWidth * normalize(release, releaseMin, releaseMax)
-        let arcSize = 0.9
-        let moveTo = (p) => { 
-            let tp = translate(transpose, p)
-            context.moveTo(tp.x, tp.y)
-        }
-        let lineTo = (p) => {
-            let tp = translate(transpose, p)
-            context.lineTo(tp.x, tp.y)
-        }
-        let bezierCurveTo = (p1, p2, p3) => {
-            let tp1 = translate(transpose, p1)
-            let tp2 = translate(transpose, p2)
-            let tp3 = translate(transpose, p3)
-            context.bezierCurveTo(tp1.x, tp1.y, tp2.x, tp2.y, tp3.x, tp3.y)
-        }
-        let quadraticCurveTo = (p1, p2) => {
-            let tp1 = translate(transpose, p1)
-            let tp2 = translate(transpose, p2)
-            context.quadraticCurveTo(tp1.x, tp1.y, tp2.x, tp2.y)
-        }
-        context.beginPath()
-        moveTo(point(bX, bY + bHeight + spacing))
-        lineTo(point(bX + bWidth, bY + bHeight + spacing))
-        context.strokeStyle = "#d3d3d3"
-        context.stroke()
-        context.beginPath()
-        moveTo(point(bX, bY + bHeight))
-        quadraticCurveTo(point(bX + aw * arcSize, bY + bHeight * arcSize), point(bX + aw, bY))
-        lineTo(point(bX + aw, bY + bHeight))
-        lineTo(point(bX, bY + bHeight))
-        context.strokeStyle = rose
-        context.stroke()
-        context.beginPath()
-        moveTo(point(bX, bY + bHeight));
-        quadraticCurveTo(point(bX + aw * arcSize, bY + bHeight * arcSize), point(bX + aw, bY));
-        lineTo(point(bX + aw, bY + bHeight))
-        context.fillStyle = rose
-        context.fill()
-        context.beginPath()
-        moveTo(point(bX + aw + spacing, bY + bHeight))
-        lineTo(point(bX + aw + spacing, bY))
-        quadraticCurveTo(point(
-            bX + aw + spacing + dw * (1.0 - arcSize), bY + (bHeight - sh) * arcSize), 
-            point(bX + aw + spacing + dw, bY + bHeight - sh))
-        lineTo(point(bX + aw + spacing + dw, bY + bHeight))
-        context.closePath()
-        context.strokeStyle = blue
-        context.stroke()
-        context.beginPath()
-        moveTo(point(bX + aw + spacing, bY + bHeight))
-        lineTo(point(bX + aw + spacing, bY));
-        quadraticCurveTo(point(
-            bX + aw + spacing + dw * (1.0 - arcSize), bY + (bHeight - sh) * arcSize), 
-            point(bX + aw + spacing + dw, bY + bHeight - sh))
-        lineTo(point(bX + aw + spacing + dw, bY + bHeight))
-        lineTo(point(bX + aw + spacing, bY + bHeight))
-        context.fillStyle = blue
-        context.fill()
-        context.beginPath()
-        moveTo(point(bX + aw + spacing + dw + spacing, bY + bHeight - sh))
-        lineTo(point(bX + bWidth - spacing - rw, bY + bHeight - sh))
-        lineTo(point(bX + bWidth - spacing - rw, bY + bHeight))
-        lineTo(point(bX + aw + spacing + dw + spacing, bY + bHeight))
-        context.closePath()
-        context.strokeStyle = yellow
-        context.stroke()
-        context.beginPath()
-        moveTo(point(bX + aw + spacing + dw + spacing, bY + bHeight - sh))
-        lineTo(point(bX + bWidth - spacing - rw, bY + bHeight - sh))
-        lineTo(point(bX + bWidth - spacing - rw, bY + bHeight))
-        lineTo(point(bX + aw + spacing + dw + spacing, bY + bHeight))
-        context.fillStyle = yellow
-        context.fill()
-        context.beginPath()
-        moveTo(point(bX + bWidth - rw, bY + bHeight))
-        lineTo(point(bX + bWidth - rw, bY + bHeight - sh))
-        quadraticCurveTo(
-            point(bX + bWidth - rw * arcSize, bY + bHeight - sh * (1.0 - arcSize)), 
-            point(bX + bWidth, bY + bHeight))
-        context.closePath()
-        context.strokeStyle = red
-        context.stroke()
-        context.beginPath()
-        moveTo(point(bX + bWidth - rw, bY + bHeight))
-        lineTo(point(bX + bWidth - rw, bY + bHeight - sh))
-        quadraticCurveTo(
-            point(bX + bWidth - rw * arcSize, bY + bHeight - sh * (1.0 - arcSize)), 
-            point(bX + bWidth, bY + bHeight))
-        context.fillStyle = red
-        context.fill()
-    }
-    function clamp (v, min, max) { return v < min ? min : v > max ? max : v }
-    function normalize(n, min, max) { return (n - min) / (max - min) }
-    function vector(x,y) { return new Vector(x,y) }
-    function point(x,y) { return new Vector(x,y) } // hmm...
-    function floor(x) { return Math.floor(x) }
-    function transform_scale(v, s) { return v.mul(s) }
-    function translate(v,p) { return v.plus(p) }
-    function rotate(p,a,orgin) {
-        let s = Math.sin(a)
-        let c = Math.cos(a)
-        p = p.minus(orgin)
-        p = point(p.x * c - p.y * s, p.x * s + p.y * c)
-        return p.plus(orgin)
-    }
-    function radians(d) { return d * (Math.PI/180) }
-    function map(x, in_min, in_max, out_min, out_max) {
-        return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min
-    }
-}
-'use strict'
-function Client () {
-  this.install = function (host) {
-    console.info('Client', 'Installing..')
-    this.adsr = new ADSR(this)
-    this.renderer = new Renderer(this)
-    host.appendChild(this.renderer.el);
-    document.addEventListener('keypress', (e) => { this.handleKeyPress(e) }, false );
-  }
-  this.start = () => {
-    console.log('Client', 'Starting..')
-    this.adsr.start()
-    this.renderer.start()
-    setInterval(() => { this.renderer.update() }, 33) // redraw at 30hz
-    setTimeout(() => { document.body.className += ' ready' }, 250)
-  }
-  this.update = () => {
-    console.log('Client', 'Update...')
-    this.renderer.update()
-  }
-  this.clear = () => {
-  }
-  this.reset = () => {
-  }
-  this.whenOpen = (file, data) => {
-  }
-  this.getPadding = () => {
-    return { x: 60, y: 90 }
-  }
-  this.getWindowSize = () => {
-    return { width: window.innerWidth, height: window.innerHeight }
-  }
-  this.getProjectSize = () => {
-    return this.tool.settings.size
-  }
-  this.getPaddedSize = () => {
-    const rect = this.getWindowSize()
-    const pad = this.getPadding()
-    return { width: step(rect.width - pad.x, 15), height: step(rect.height - pad.y, 15) }
-  }
-  this.handleKeyPress = (e) => {
-    if (e.key === "q") {
-      this.renderer.incParamWave(1)
-    }
-    else if (e.key === "a") {
-      this.renderer.incParamWave(-1)
-    }
-    else if (e.key === "w") {
-      this.renderer.incParamSub(1)
-    }
-    else if (e.key === "s") {
-      this.renderer.incParamSub(-1)
-    } 
-    else if (e.key === "e") {
-      this.renderer.incParamRelation(1)
-    }
-    else if (e.key === "d") {
-      this.renderer.incParamRelation(-1)
-    } 
-    else if (e.key === "r") {
-      this.renderer.incParamFilter(1)
-    }
-    else if (e.key === "f") {
-      this.renderer.incParamFilter(-1)
-    } 
-  }
-  function sizeOffset (a, b) { return { width: a.width - b.width, height: a.height - b.height } }
-  function step (v, s) { return Math.round(v / s) * s }
-}
-/*
- * 
- */
-'use strict'
+
 function Renderer (client) {
     this.el = document.createElement('canvas')
     this.el.id = 'guide'
     this.el.width = 640
-    this.el.height = 640
-    this.el.style.width = '320px'
+    this.el.height = 320
+    this.el.style.width = '640px'
     this.el.style.height = '320px'
     this.context = this.el.getContext('2d')
     this.showExtras = true
+
     this.scale = 1 //window.devicePixelRatio
+
+    // params
     this.filter = 0.1
     this.wave = 3.0
     this.relation = 1.0
     this.sub = 0.0
+
     this.controlWave = (v) => {
         let mv = map(v, 0, 127, 0.08, 4.0)
         this.wave = mv
         return mv
     }
+
     this.controlSub = (v) => {
         let mv = map(v, 0, 127, 0, 1.0)
         this.sub = mv
         return mv
     }
+    
     this.controlRelation = (v) => {
         let mv = map(v, 0, 127, 0, 3.01)
         this.relation = mv
         return mv 
     }
+    
     this.controlFilter = (v) => {
         let mv = map(v, 0, 127, 0, 1.0)
         this.filter = mv
         return mv
     }
+
+    // handle Midi Twister style endless encoders
     this.incWave = (v) => {
         this.wave = clamp(this.wave + 0.01 * v, 0, 4)
+        return this.wave
     }
+
     this.incSub = (v) => {
         this.sub = clamp(this.sub + 0.01 * v, 0, 1)
+        return this.sub
     }
+
     this.incRelation = (v) => {
         this.relation = clamp(this.relation + 0.01 * v, 0, 3.01)
+        return this.relation
     }
+
     this.incFilter = (v) => {
         this.filter = clamp(this.filter + 0.01 * v, 0, 1)
+        return this.filter
     }
+
+    // handle directly setting params
     this.updateFilter = function(value) {
         this.filter = value;
     }
+
     this.updateWave = function(value) {
         this.wave = value;
     }
+
     this.updateRelation = function(value) {
         this.relation = value
     }
+
     this.updateSub = function(value) {
         this.sub = value
     }
+
+
+    // constants
+
     const red = "#DD4A22"
     const yellow = "#F3B83C"
     const blue = "#6060A6"
     const rose = "#FFBDB0"
     const rootbeer = "#1f0c07"
+
     const pw_square = new Array(
         vector(0.0, 1.0), vector(0.0, 1.0), vector(0.0, 0.0), vector(2.0, 0.0), 
         vector(2.0, 1.0), vector(2.0, 1.0), vector(2.0, 0.0), vector(4.0, 0.0), 
         vector(4.0, 1.0)
     );
+
     const square = [
         vector(0.0, 1.0), vector(1.0, 1.0), vector(1.0, 0.0), vector(2.0, 0.0), 
         vector(2.0, 1.0), vector(3.0, 1.0), vector(3.0, 0.0), vector(4.0, 0.0), 
         vector(4.0, 1.0)
     ];
+
     const below_triangle = [
         vector(4.0 / 5.0, 1.0), vector(4.0 / 5.0, 1.0),  vector(2.0 * 4.0 / 5.0, 0.0),
         vector(2.0 * 4.0 / 5.0, 0.0), vector(3.0 * 4.0 / 5.0, 1.0), vector(3.0 * 4.0 / 5.0, 1.0),
         vector(4.0 * 4.0 / 5.0, 0.0), vector(4.0 * 4.0 / 5.0, 0.0), vector(4.0, 1.0)
     ];
+
     const triangle = [
         vector(4.0 / 5.0, 1.0), vector(2.0 * 4.0 / 5.0, 0.0), vector(3.0 * 4.0 / 5.0, 1.0),
         vector(3.0 * 4.0 / 5.0, 1.0), vector(3.0 * 4.0 / 5.0, 1.0), vector(4.0 * 4.0 / 5.0, 0.0),
         vector(4.0, 1.0), vector(4.0, 1.0), vector(4.0, 1.0)
     ];
+
     const saw = [
         vector(0.0, 1.0), vector(2.0, 0.0), vector(2.0, 1.0), vector(2.0, 1.0), 
         vector(2.0, 1.0), vector(4.0, 0.0), vector(4.0, 1.0), vector(4.0, 1.0), 
         vector(4.0, 1.0)
     ];
+
     const hs_saw = [
         vector(0.0, 1.0), vector(1.0, 0.0), vector(1.0, 1.0), vector(2.0, 0.0), 
         vector(2.0, 1.0), vector(3.0, 0.0), vector(3.0, 1.0), vector(4.0, 0.0), 
         vector(4.0, 1.0)
     ];
+
+    // functions 
+
     this.start = function () {
         this.update()
+        //window.requestAnimationFrame(() => { this.update() });
     }
+
     this.update = function (force = false) {
-        this.resize()
+        //this.resize()
         this.draw()
+        //window.requestAnimationFrame(() => { this.update() });
     }
+
     this.draw = function() {
         this.clear()
         this.drawDots()
@@ -418,12 +150,14 @@ function Renderer (client) {
         this.drawDial()
         client.adsr.draw(this.context, vector(300, 0))
     }
+
     this.clear = function () {
         this.context.clearRect(0, 0, this.el.width * this.scale, this.el.height * this.scale);
         this.context.rect(0, 0, this.el.width * this.scale, this.el.height * this.scale);
         this.context.fillStyle = rootbeer;
         this.context.fill();
     }
+
     this.resize = function () {
         const _target = client.getPaddedSize()
         const _current = { width: this.el.width / this.scale, height: this.el.height / this.scale }
@@ -437,68 +171,87 @@ function Renderer (client) {
         this.el.style.width = (_target.width) + 'px'
         this.el.style.height = (_target.height) + 'px'
     }
+    // ------------------
+
     this.drawDots = function() {
         var style = { color: "#d3d3d3", thickness: 6.0, strokeLinecap: "round", strokeLinejoin: "round"}
         this.setStyle(style)
+        
         this.context.beginPath()
         this.context.moveTo(286.6, 29.2)
         this.context.lineTo(287.0, 29.2)
         this.context.stroke()
+
         this.context.moveTo(193.4, 29.2);
         this.context.lineTo(193.7, 29.2);
         this.context.stroke();
+
         this.context.beginPath();
         this.context.moveTo(286.6, 79.4);
         this.context.lineTo(287.0, 79.4);
         this.context.stroke();
+
         this.context.beginPath();
         this.context.moveTo(193.4, 79.4);
         this.context.lineTo(193.7, 79.4);
         this.context.stroke();
+
         this.context.beginPath();
         this.context.moveTo(286.6, 110.7);
         this.context.lineTo(287.0, 110.7);
         this.context.stroke();
+
         this.context.beginPath();
         this.context.moveTo(193.4, 110.7);
         this.context.lineTo(193.7, 110.7);
         this.context.stroke();
+
         this.context.beginPath();
         this.context.moveTo(286.6, 202.0);
         this.context.lineTo(287.0, 202.0);
         this.context.stroke();
+
         this.context.beginPath();
         this.context.moveTo(193.4, 202.0);
         this.context.lineTo(193.7, 202.0);
         this.context.stroke();
+
         this.context.beginPath();
         this.context.moveTo(153.8, 217.5);
         this.context.lineTo(154.1, 217.5);
         this.context.stroke();
+
         this.context.beginPath();
         this.context.moveTo(33.0, 217.5);
         this.context.lineTo(33.4, 217.5);
         this.context.stroke();
+
         this.context.beginPath();
         this.context.moveTo(153.8, 82.3);
         this.context.lineTo(154.1, 82.3);
         this.context.stroke();
+
         this.context.beginPath();
         this.context.moveTo(33.0, 82.3);
         this.context.lineTo(33.4, 82.3);
         this.context.stroke();
+
         this.context.beginPath();
         this.context.moveTo(153.8, 22.3);
         this.context.lineTo(154.1, 22.3);
         this.context.stroke();
+
         this.context.beginPath();
         this.context.moveTo(33.0, 22.3);
         this.context.lineTo(33.4, 22.3);
         this.context.stroke();
     }
+
     this.drawKey = function() {
         var style = { color: "#d3d3d3", thickness: 6.0, strokeLinecap: "round", strokeLinejoin: "round"}
         this.setStyle(style)
+
+        // box
         this.context.beginPath();
         this.context.moveTo(269.3, 76.4);
         this.context.lineTo(211.0, 76.4);
@@ -511,7 +264,9 @@ function Renderer (client) {
         this.context.bezierCurveTo(283.8, 70.0, 277.3, 76.4, 269.3, 76.4);
         this.context.closePath();
         this.context.stroke();
+
         this.context.strokeStyle = yellow
+        // Nuke/Key
         this.context.beginPath();
         this.context.moveTo(228.8, 54.5);
         this.context.bezierCurveTo(228.8, 59.2, 225.0, 63.0, 220.3, 63.0);
@@ -520,25 +275,35 @@ function Renderer (client) {
         this.context.bezierCurveTo(225.0, 46.0, 228.8, 49.8, 228.8, 54.5);
         this.context.closePath();
         this.context.stroke();
+
+        // Nuke/Key/Base
         this.context.beginPath();
         this.context.moveTo(228.8, 54.5);
         this.context.lineTo(268.6, 54.5);
         this.context.stroke();
+
+        // Nuke/Key/Tooth 2
         this.context.beginPath();
         this.context.moveTo(260.6, 54.5);
         this.context.lineTo(260.6, 63.0);
         this.context.stroke();
+
+        // Nuke/Key/Tooth 1
         this.context.beginPath();
         this.context.moveTo(249.6, 54.5);
         this.context.lineTo(249.6, 63.0);
         this.context.stroke();
+
+        // Nuke/Key/Fill
         this.context.beginPath();
         this.context.moveTo(225.4, 47.7);
         this.context.lineTo(225.4, 61.1);
         this.context.stroke();
     }
+
     this.drawFilter = function () {
         var style = { color: "#d3d3d3", thickness: 6.0, strokeLinecap: "round", strokeLinejoin: "round"}
+        
         this.context.beginPath()
         this.context.moveTo(269.3, 199.0)
         this.context.lineTo(211.0, 199.0)
@@ -549,9 +314,12 @@ function Renderer (client) {
         this.context.bezierCurveTo(277.3, 114.7 + 10.0, 283.8, 121.2 + 10.0, 283.8, 129.2 + 10.0)
         this.context.lineTo(283.8, 184.5)
         this.context.bezierCurveTo(283.8, 192.5, 277.3, 199.0, 269.3, 199.0)
+        
         this.setStyle(style)
         this.context.stroke();
         this.context.closePath()
+        
+        // filter gauge
         let length = this.filter * 40.0 
         this.context.beginPath()
         this.context.moveTo(210.1, 157.2)
@@ -559,14 +327,17 @@ function Renderer (client) {
         this.context.bezierCurveTo(221.1 + length, 164.7, 229.2 + length, 173.3, 229.7 + length, 183.8)
         this.context.bezierCurveTo(229.7 + length, 184.3, 229.8 + length, 184.7, 229.8 + length, 185.2)
         this.context.lineTo(229.8 + length, 187.3) 
+
         this.context.strokeStyle = red
         this.context.stroke();
         this.context.closePath()
     }
+
     this.drawWave = function() {
         var style = { color: "#d3d3d3", thickness: 6.0, strokeLinecap: "round", strokeLinejoin: "round"}
         this.setStyle(style)
         this.context.beginPath()
+        // draw box
         this.context.moveTo(136.5, 214.5)
         this.context.lineTo(50.7, 214.5)
         this.context.bezierCurveTo(42.7, 214.5, 36.2, 208.1, 36.2, 200.1)
@@ -576,11 +347,16 @@ function Renderer (client) {
         this.context.bezierCurveTo(144.5, 86.3, 151.0, 92.7, 151.0, 100.7)
         this.context.lineTo(151.0, 200.1)
         this.context.bezierCurveTo(151.0, 208.1, 144.5, 214.5, 136.5, 214.5)
+
+        // draw line between wave and hazard sign
         this.context.moveTo(55.1, 131.6)
         this.context.lineTo(132.0, 131.6)
+
         this.context.strokeStyle = "#d3d3d3"
         this.context.stroke()
         this.context.closePath()
+        
+        // draw waveform
         let dial = normalize(this.wave, 0.0, 4.0) * 4.0;
         var frac = dial - floor(dial);
         var points = pw_square;
@@ -611,26 +387,37 @@ function Renderer (client) {
         else if (dial == 4.0) {
             points = hs_saw.map((x, i) => x.mul_scalar(1.0))
         }
+
+        // transform with scale and move into position
         let trans = vector(65.0 / 4.0, 12.0)
         points = points.map((v, i) => translate(transform_scale(v, trans), vector(60.0, 102.0)))
+        // finally draw wave
         this.context.beginPath()
         this.context.moveTo(points[0].x, points[0].y)
         for (var i = 1; i < points.length; i++) {
             this.context.lineTo(points[i].x, points[i].y)
         }
+
         this.context.strokeStyle = blue
         this.context.stroke()
         this.context.closePath()
+
+        // draw hazard
         let hazard_rotation_value_l = 0.0 + this.relation * 0.3;
         let hazard_rotation_value_r = 0.0 - this.relation * 0.3;
+
+        // helpers
         let transform_l = (p) => rotate(p, hazard_rotation_value_l, vector(93.6, 172.6))
         let transform_r = (p) => rotate(p, hazard_rotation_value_r, vector(93.6, 172.6))
         let moveTo = (p) => this.context.moveTo(p.x, p.y)
         let lineTo = (p) => this.context.lineTo(p.x, p.y)
         let arc = (cp, r, sa, ea) => this.context.arc(cp.x, cp.y, r, sa, ea)
+
         this.context.beginPath()
+
         let centre = point(93.6, 172.6)
         let radius = 26.0
+       
         var p1 = transform_l(point(93.6, 198.1))
         var p3 =transform_r(point(93.6, 198.1))
         moveTo(transform_l(point(93.6, 180.6)))
@@ -640,6 +427,7 @@ function Renderer (client) {
         var endAngle = Math.atan2(p1.y - centre.y, p1.x - centre.x)
         var startAngle   = Math.atan2(p3.y - centre.y, p3.x - centre.x)
         arc(centre, radius, startAngle, endAngle)
+        
         p1 = transform_l(point(115.6, 159.9))
         p3 = transform_r(point(115.6, 159.9))
         moveTo(transform_l(point(100.5, 168.6)))
@@ -649,6 +437,7 @@ function Renderer (client) {
         endAngle = Math.atan2(p1.y - centre.y, p1.x - centre.x)
         startAngle   = Math.atan2(p3.y - centre.y, p3.x - centre.x)
         arc(centre, radius, startAngle, endAngle)
+        
         p1 = transform_l(point(71.5, 159.9))
         p3 = transform_r(point(71.5, 159.9))
         moveTo(transform_l(point(86.7, 168.6)))
@@ -658,26 +447,33 @@ function Renderer (client) {
         endAngle = Math.atan2(p1.y - centre.y, p1.x - centre.x)
         startAngle   = Math.atan2(p3.y - centre.y, p3.x - centre.x)
         arc(centre, radius, startAngle, endAngle)
+        
+        // draw centre circle
         this.context.moveTo(101.6, 172.6)
         this.context.bezierCurveTo(101.6, 177.0, 98.0, 180.6, 93.6, 180.6);
         this.context.bezierCurveTo(89.2, 180.6, 85.6, 177.0, 85.6, 172.6);
         this.context.bezierCurveTo(85.6, 168.2, 89.2, 164.6, 93.6, 164.6);
         this.context.bezierCurveTo(98.0, 164.6, 101.6, 168.2, 101.6, 172.6);
+
         this.context.strokeStyle = rose
         this.context.stroke()
     }
+
     this.drawDial = function() {
         var style = { color: "#ffffff", thickness: 6.0, strokeLinecap: "round", strokeLinejoin: "round"}
         this.setStyle(style)
+
         this.context.beginPath()
         this.context.moveTo(59.0, 57.5)
         this.context.bezierCurveTo(59.0, 38.5, 74.5, 23.0, 93.6, 23.0)
         this.context.stroke()
+
         this.context.beginPath()
         this.context.moveTo(93.6, 23.0)
         this.context.bezierCurveTo(112.7, 23.0, 128.1, 38.5, 128.1, 57.5)
         this.context.strokeStyle = red
         this.context.stroke()
+
         this.context.beginPath()
         this.context.moveTo(95.4, 57.5)
         this.context.bezierCurveTo(95.4, 58.5, 94.6, 59.3, 93.6, 59.3)
@@ -685,6 +481,7 @@ function Renderer (client) {
         this.context.bezierCurveTo(91.8, 56.6, 92.6, 55.8, 93.6, 55.8)
         this.context.bezierCurveTo(94.6, 55.8, 95.4, 56.6, 95.4, 57.5)
         this.context.stroke()
+
         this.context.beginPath()
         let rotation = -1.57 + this.sub * Math.PI
         this.context.moveTo(93.6, 57.5)
@@ -692,6 +489,9 @@ function Renderer (client) {
         this.context.lineTo(p1.x, p1.y)
         this.context.stroke()
     }
+// ------------------
+
+
     this.drawVertex = function (pos, radius = 5) {
         this.context.beginPath()
         this.context.lineWidth = 2
@@ -699,22 +499,28 @@ function Renderer (client) {
         this.context.fill()
         this.context.closePath()
     }
+
     this.setStyle = function(style) {
         this.context.strokeStyle = style.color
         this.context.lineWidth = style.thickness * this.scale
         this.context.lineCap = style.strokeLinecap
         this.context.lineJoin = style.strokeLinejoin
     }
+
     this.drawPath = function (path, style) {
         const p = new Path2D(path)
+
         this.context.strokeStyle = style.color
         this.context.lineWidth = style.thickness * this.scale
         this.context.lineCap = style.strokeLinecap
         this.context.lineJoin = style.strokeLinejoin
+
         if (style.fill && style.fill !== 'none') {
         this.context.fillStyle = style.color
         this.context.fill(p)
         }
+
+        // Dash
         this.context.save()
         if (style.strokeLineDash) { 
             this.context.setLineDash(style.strokeLineDash) 
@@ -725,6 +531,7 @@ function Renderer (client) {
         this.context.stroke(p)
         this.context.restore()
     }
+
     function printSize (size) { return `${size.width}x${size.height}` }
     function sizeOffset (a, b) { return { width: a.width - b.width, height: a.height - b.height } }
     function clamp (v, min, max) { return v < min ? min : v > max ? max : v }
@@ -737,8 +544,14 @@ function Renderer (client) {
     function rotate(p,a,orgin) {
         let s = Math.sin(a)
         let c = Math.cos(a)
+        
+        // translate to orgin
         p = p.minus(orgin)
+
+        // rotate around orgin
         p = point(p.x * c - p.y * s, p.x * s + p.y * c)
+
+        // translate back to orignal position
         return p.plus(orgin)
     }
     function radians(d) { return d * (Math.PI/180) }
@@ -746,38 +559,3 @@ function Renderer (client) {
         return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min
     }
 }
-function Vector(x, y) {
-	var that = this;
-  	that.x = x;
-  	that.y = y;
-    that.plus = function (vector){
-    	return new Vector(that.x + vector.x, that.y + vector.y); 
-    }
-    that.minus = function (vector){
-      return new Vector(that.x - vector.x, that.y - vector.y);
-    }
-    that.mul = function(vector) {
-      return new Vector(that.x * vector.x, that.y * vector.y);
-    }
-    that.mul_scalar = function(scalar) {
-        return new Vector(that.x * scalar, that.y * scalar);
-    }
-    Object.defineProperty(that, 'length', {
-    	get: function (){
-          return Math.sqrt(Math.pow(that.y, 2) + Math.pow(that.x, 2));
-    	}
-    });
-};
-      console.log = console.error = (str) => {
-        sendMsg(console_msg, 0, 0, str);
-      }
-      const client = new Client()
-      client.install(document.body)
-      window.addEventListener('load', () => { 
-        client.start()
-      })
-    </script>
-    <style>
-    </style>
-  </body>
-</html>
