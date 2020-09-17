@@ -42,3 +42,7 @@ cp -r default/default.json ./pkg/default
 cp -r default/target/wasm32-unknown-unknown/release/default.wasm ./pkg/default
 cp -r default/ui/default.html ./pkg/default/default.html
 
+mkdir ./pkg/muses/
+cp -r muses/muses.json ./pkg/muses
+# NOTE: muses requires tht nuke.wasm and reflect.wasm are installed in their respective directories
+cp -r muses/ui/index.html ./pkg/muses/muses.html

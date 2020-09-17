@@ -17,6 +17,7 @@ This repo contains a number of AA module examples.
 * [VL1](https://github.com/bgaster/aa_examples/tree/master/vl1) is a fairly close emulation of the [Casio VL-1](https://en.wikipedia.org/wiki/Casio_VL-1). (Audio Anywhere standalone version pictured above.)
 * [Gain](https://github.com/bgaster/aa_examples/tree/master/gain) is a simple gain controller
 * [Reflect](https://github.com/bgaster/aa_examples/tree/master/reflect) is a spring reverb emulation
+* [Muses Synth](https://github.com/bgaster/aa_examples/tree/master/muses) is the Muses Synth, which consists of the Nuke synth followed by Reflect reverb. This example demostrates Audio Anywhere audio graphs, where each DSP is a seperate WASM, but there is single UI.
 * More in development
 
 ## Building
