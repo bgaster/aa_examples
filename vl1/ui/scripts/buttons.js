@@ -25,7 +25,7 @@ buttonPresses = function(e, client) {
   for (var x = 0; x < notes.length; x++) {
     if (e.clientX >= 333 + (x*57) && e.clientY >= 263 && e.clientX <= 363 + (x*57) && e.clientY <= 323)  {
       //console.log(notes[x] + " on");
-      sendMsg(6, 0, 0, [toMidi(x), 127, 0])
+      parent.sendMsg(6, 0, 0, [toMidi(x), 127, 0])
       currentNote = x
       isWhite = true
       noteOnRecieved = true
@@ -34,7 +34,7 @@ buttonPresses = function(e, client) {
     if (e.clientX >= 364 + (x*57) && e.clientY >= 178 && e.clientX <= 389 + (x*57) && e.clientY <= 248) {
       if (notes[x].includes("B") == false && notes[x].includes("E") == false) {
         //console.log(notes[x]+ "# on")
-        sendMsg(6, 0, 0, [toMidi(x), 127, 0])
+        parent.sendMsg(6, 0, 0, [toMidi(x), 127, 0])
         currentNote = x
         isWhite = false
         noteOnRecieved = true
@@ -288,7 +288,7 @@ buttonUnpresses = function(client){
       //console.log(notes[currentNote] + "# off");
       client.renderer.animateKeys(currentNote, false)
     }
-    sendMsg(7, 0, 0, [toMidi(currentNote), 127, 0])
+    parent.sendMsg(7, 0, 0, [toMidi(currentNote), 127, 0])
   }
   noteOnRecieved == false
 }
