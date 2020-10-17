@@ -91,6 +91,7 @@ Once an example is implemented the following steps must be completed to ensure t
 * Add comamnds to copy the module bundle to **package.sh** so it is added when building a release.
 
 # License
+
 © 2020 [Benedict R. Gaster (cuberoo_)](https://bgaster.github.io/)
 
 Licensed under either of

@@ -91,7 +91,7 @@
         $(function() {
             $(".gainKnob").knob({
                     'change' : function (v) { 
-                        sendMsg(sendParam, 0, 0, v);
+                        parent.sendMsg(sendParam, 0, 0, v);
                      }
                 }
             );

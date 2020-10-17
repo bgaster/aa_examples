@@ -75,45 +75,45 @@ function controlChange(ctrlTag, value) {
     }
     if (controlNuke) {
         if (ctrlTag == controlFilter && client) {
-            sendMsg(1, 0, 0, client.renderer.incFilter(value))
+            parent.sendMsg(1, 0, 0, client.renderer.incFilter(value))
         }
         else if (ctrlTag == controlWave && client) {
-            sendMsg(1, 0, 3, client.renderer.incWave(value))
+            parent.sendMsg(1, 0, 3, client.renderer.incWave(value))
         }
         else if (ctrlTag == controlRelation && client) {
-            sendMsg(1, 0, 1, client.renderer.incRelation(value))
+            parent.sendMsg(1, 0, 1, client.renderer.incRelation(value))
         }
         else if (ctrlTag == controlSub && client) {
-            sendMsg(1, 0, 2, client.renderer.incSub(value))
+            parent.sendMsg(1, 0, 2, client.renderer.incSub(value))
         }
         else if (ctrlTag == controlAttack && client) {
-            sendMsg(1, 0, 4, client.adsr.incAttack(value))
+            parent.sendMsg(1, 0, 4, client.adsr.incAttack(value))
         }
         else if (ctrlTag == controlDecay && client) {
-            sendMsg(1, 0, 5, client.adsr.incDecay(value))
+            parent.sendMsg(1, 0, 5, client.adsr.incDecay(value))
         }
         else if (ctrlTag == controlSubstain && client) {
-            sendMsg(1, 0, 7, client.adsr.incSubstain(value))
+            parent.sendMsg(1, 0, 7, client.adsr.incSubstain(value))
         }
         else if (ctrlTag == controlRelease && client) {
-            sendMsg(1, 0, 6, client.adsr.incRelease(value))
+            parent.sendMsg(1, 0, 6, client.adsr.incRelease(value))
         }
     }
     else {
         if (ctrlTag == controlShape && client) {
-            sendMsg(1, 1, 3, client.reflectRenderer.incShape(value))
+            parent.sendMsg(1, 1, 3, client.reflectRenderer.incShape(value))
         }
         else if (ctrlTag == controlSpread && client) {
-            sendMsg(1, 1, 5, client.reflectRenderer.incSpread(value))
+            parent.sendMsg(1, 1, 5, client.reflectRenderer.incSpread(value))
         }
         else if (ctrlTag == controlLength && client) {
-            sendMsg(1, 1, 1, client.reflectRenderer.incLength(value))
+            parent.sendMsg(1, 1, 1, client.reflectRenderer.incLength(value))
         }
         else if (ctrlTag == controlShimmer && client) {
-            sendMsg(1, 1, 4, client.reflectRenderer.incShimmer(value))
+            parent.sendMsg(1, 1, 4, client.reflectRenderer.incShimmer(value))
         }
         else if (ctrlTag == controlDryWet && client) {
-            sendMsg(1, 1, 0, client.reflectRenderer.incDryWet(value))
+            parent.sendMsg(1, 1, 0, client.reflectRenderer.incDryWet(value))
         }
     }
 }
@@ -1249,7 +1249,7 @@ function Vector(x, y) {
     });
 };
       console.log = console.error = (str) => {
-        sendMsg(console_msg, 0, 0, str);
+        parent.sendMsg(0, 0, 0, str);
       }
       const client = new Client()
       client.install(document.body)
