@@ -7,6 +7,7 @@
 		"width": 1380,
 		"height": 400
 	},
+	"gui_description": "/vl1/vl1_gui_description.json",
 	"info": {
 		"name": "VL1",
 		"vendor": "cuberoo_",
