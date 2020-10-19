@@ -113,6 +113,54 @@
                 { "node": 0, "index": 6, "value": 0.0 },
                 { "node": 0, "index": 5, "value": 0.0 }
               ]
+            },
+            { 
+              "name" : "Fantasy", 
+              "values": [ 
+                { "node": 0, "index": 7, "value": 1.0 },
+                { "node": 0, "index": 0, "value": 0.001 },
+                { "node": 0, "index": 1, "value": 0.001 },
+                { "node": 0, "index": 4, "value": 0.8 },
+                { "node": 0, "index": 3, "value": 1.112 },
+                { "node": 0, "index": 6, "value": 9.0 },
+                { "node": 0, "index": 5, "value": 0.0 }
+              ]
+            },
+            { 
+              "name" : "Violin", 
+              "values": [ 
+                { "node": 0, "index": 7, "value": 2.0 },
+                { "node": 0, "index": 0, "value": 0.001 },
+                { "node": 0, "index": 1, "value": 0.001 },
+                { "node": 0, "index": 4, "value": 0.8 },
+                { "node": 0, "index": 3, "value": 1.112 },
+                { "node": 0, "index": 6, "value": 9.0 },
+                { "node": 0, "index": 5, "value": 0.0 }
+              ]
+            },
+            { 
+              "name" : "Flute", 
+              "values": [ 
+                { "node": 0, "index": 7, "value": 3.0 },
+                { "node": 0, "index": 0, "value": 0.0564 },
+                { "node": 0, "index": 1, "value": 0.001 },
+                { "node": 0, "index": 4, "value": 0.7999 },
+                { "node": 0, "index": 3, "value": 0.223 },
+                { "node": 0, "index": 6, "value": 3.0 },
+                { "node": 0, "index": 5, "value": 0.0 }
+              ]
+            },
+            { 
+              "name" : "Guitar", 
+              "values": [ 
+                { "node": 0, "index": 7, "value": 4.0 },
+                { "node": 0, "index": 0, "value": 0.2228 },
+                { "node": 0, "index": 1, "value": 0.2231 },
+                { "node": 0, "index": 4, "value": 0.1 },
+                { "node": 0, "index": 3, "value": 1.5558 },
+                { "node": 0, "index": 6, "value": 0.0 },
+                { "node": 0, "index": 5, "value": 0.0 }
+              ]
             }
           ]
         }
