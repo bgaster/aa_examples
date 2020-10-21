@@ -2,6 +2,64 @@
     "name": "Reflect",
     "width": 180,
     "height": 143,
-    "widgets": [
-    ]
+    "widgets": {
+        "sliders": [
+            { 
+               "type": "float_slider",
+               "name": "length", 
+               "x": 5, "y": 18, 
+               "w": 80, "h": 15, 
+               "init": 0.5, 
+               "min": 0.0, 
+               "max": 1.0, 
+               "digits": 2,
+               "node": 0,
+               "index": 1
+            },
+            { 
+                "type": "float_slider",
+                "name": "shape", 
+                "anchored": "anchored_below", 
+                "w": 80, "h": 15, 
+                "init": 1.0, 
+                "min": 0.0, 
+                "max": 2.0,
+                "node": 0,
+                "index": 3 
+             },
+             { 
+                "type": "float_slider",
+                "name": "shimmer", 
+                "anchored": "anchored_below", 
+                "w": 100, "h": 15, 
+                "init": 0.0, 
+                "min": 0.0, 
+                "max": 1.2,
+                "node": 0,
+                "index": 4
+             },
+             { 
+                "type": "float_slider",
+                "name": "spread", 
+                "anchored": "anchored_below", 
+                "w": 80, "h": 15, 
+                "init": 0.0, 
+                "min": 0.0, 
+                "max": 1.0,
+                "node": 0,
+                "index": 5
+             },
+             { 
+                "type": "float_slider",
+                "name": "dry/wet", 
+                "anchored": "anchored_below", 
+                "w": 80, "h": 15, 
+                "init": 0.0, 
+                "min": 0.0, 
+                "max": 1.0,
+                "node": 0,
+                "index": 0
+             }
+        ]
+    }
 }
