@@ -1,13 +1,13 @@
 {
     "name": "VL-1",
-    "width": 200,
-    "height": 143,
+    "width": 180,
+    "height": 138,
     "widgets": {
       "sliders": [
         { 
          "type": "int_slider",
          "name": "wv", 
-         "x": 5, "y": 17, 
+         "x": 10, "y": 8, 
          "w": 80, "h": 15, 
          "init": 0, 
          "min": 0, 
@@ -102,8 +102,8 @@
         {
           "type": "dropdown",
           "name": "presets",
-          "x" : 5,
-          "y" : 2,
+          "x" : 100,
+          "y" : 20,
           "params": [
             { 
               "name" : "Piano", 
