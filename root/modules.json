@@ -7,6 +7,7 @@
             { "name": "VL-1", "json_url": "/vl1/vl1.json"},
             { "name": "Reflect", "json_url": "/reflect/reflect.json"},
             { "name": "Default", "json_url": "/default/default.json"},
-            { "name": "Muses", "json_url": "/muses/muses.json"}
+            { "name": "Muses", "json_url": "/muses/muses.json"},
+            { "name": "4 Track", "json_url": "/four_track/four_track.json"}
         ]
 }

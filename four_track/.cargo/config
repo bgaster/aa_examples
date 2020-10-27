@@ -1,0 +1,3 @@
+[build]
+target = "wasm32-unknown-unknown"
+rustflags = ["-C", "llvm-args=-ffast-math", "-C", "target-feature=+simd128", "-C", "opt-level=3", "-C", "target-feature=+simd128"]

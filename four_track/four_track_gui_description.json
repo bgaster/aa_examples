@@ -1,0 +1,83 @@
+{
+    "name": "4 Track",
+    "width": 360,
+    "height": 143,
+    "widgets": {
+      "sliders": [
+      ],
+      "adsrs": [ 
+      ],
+      "global_midi": [
+        { "midi_off": { "name": "stop", "node": 0, "index": 10 } }
+      ],
+      "checkboxes": [
+        {
+          "type": "checkbox",
+          "label": "rec",
+          "x": 10, "y": 10,
+          "init": false,
+          "node": 0,
+          "index": 1,
+          "midi_toggle": { "name": "record", "node": 0, "index": 1 },
+          "midi_off": { "name": "stop" }
+        },
+        {
+          "type": "checkbox",
+          "label": "play",
+          "anchored": "anchored_right",
+          "init": false,
+          "node": 0,
+          "index": 6,
+          "midi_on": { "name": "play", "node": 0, "index": 6 },
+          "midi_off": { "name": "stop" }
+        },
+        {
+          "type": "checkbox",
+          "label": "M1",
+          "x": 60, "y": 30,
+          "init": false,
+          "node": 0,
+          "index": 2
+        },
+        {
+          "type": "checkbox",
+          "label": "M2",
+          "anchored": "anchored_right",
+          "init": false,
+          "node": 0,
+          "index": 3
+        },
+        {
+          "type": "checkbox",
+          "label": "M3",
+          "anchored": "anchored_right",
+          "init": false,
+          "node": 0,
+          "index": 4
+        },
+        {
+          "type": "checkbox",
+          "label": "M4",
+          "anchored": "anchored_right",
+          "init": false,
+          "node": 0,
+          "index": 5
+        }
+      ],
+      "radio_buttons": [
+        {
+          "type": "radiobutton",
+          "name": "Track",
+          "direction": "direction_horizontal",
+          "x" : 100,
+          "y" : 10,
+          "buttons": [
+              { "label": "T1", "node": 0, "index": 0, "value": 0.0 },
+              { "label": "T2", "node": 0, "index": 0, "value": 1.0 },
+              { "label": "T3", "node": 0, "index": 0, "value": 2.0 },
+              { "label": "T4", "node": 0, "index": 0, "value": 3.0 }
+          ]
+        }
+      ]
+   }
+ }
