@@ -1,7 +1,7 @@
 {
     "name": "4 Track",
-    "width": 360,
-    "height": 143,
+    "width": 440,
+    "height": 230,
     "widgets": {
       "sliders": [
       ],
@@ -10,11 +10,12 @@
       "global_midi": [
         { "midi_off": { "name": "stop", "node": 0, "index": 10 } }
       ],
+      "4tracks": { "x": 20, "y": 10, "width": 320, "time_in_secs": 60 },
       "checkboxes": [
         {
           "type": "checkbox",
           "label": "rec",
-          "x": 10, "y": 10,
+          "x": 50, "y": 190,
           "init": false,
           "node": 0,
           "index": 1,
@@ -34,7 +35,7 @@
         {
           "type": "checkbox",
           "label": "M1",
-          "x": 60, "y": 30,
+          "x": 160, "y": 190,
           "init": false,
           "node": 0,
           "index": 2
@@ -68,9 +69,9 @@
         {
           "type": "radiobutton",
           "name": "Track",
-          "direction": "direction_horizontal",
-          "x" : 100,
-          "y" : 10,
+          "direction": "direction_vertical",
+          "x" : 370,
+          "y" : 30,
           "buttons": [
               { "label": "T1", "node": 0, "index": 0, "value": 0.0 },
               { "label": "T2", "node": 0, "index": 0, "value": 1.0 },
@@ -78,6 +79,7 @@
               { "label": "T4", "node": 0, "index": 0, "value": 3.0 }
           ]
         }
-      ]
+      ],
+      "logo": { "x": 360, "y": 150, "scale_x": 0.25, "scale_y": 0.25 }
    }
  }
